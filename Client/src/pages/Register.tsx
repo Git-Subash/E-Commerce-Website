@@ -8,7 +8,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { SummaryApi } from "@/constants/SummaryApi";
 import { useToast } from "@/hooks/use-toast";
+import Axios from "@/lib/Axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -47,19 +49,25 @@ export default function Register() {
   });
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
-      alert(data);
-      form.reset();
-      toast({
-        variant: "default",
-        title: "Message Received",
-        description:
-          "Thank you for reaching out! We will get back to you shortly",
+      const response = await Axios({
+        ...SummaryApi.register,
+        data: data,
       });
+      form.reset();
+
+      if (response) {
+        return toast({
+          variant: "default",
+          title: "Registration Successful ",
+          description:
+            "Your account has been created successfully. Welcome aboard!",
+        });
+      }
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Message Not Sent",
-        description: "We couldn't send your message. Please try again later.",
+        title: "Something went Wrong",
+        description: "We couldn't able to sign. Please try again.",
       });
     }
   }

@@ -7,6 +7,7 @@ import generateRefreshtoken from "../utils/generateRefreshtoken.js";
 import jwt from "jsonwebtoken";
 import generateOtp from "../utils/genarateOtp.js";
 import forgotPasswordTemplate from "../utils/forgotPasswordTemplate.js";
+import cloudinaryImageUpload from "../utils/cloudinaryImageUpload.js";
 
 //user registration
 export async function registerController(req, res) {
@@ -115,7 +116,7 @@ export async function LoginController(req, res) {
       return res.status(400).json({
         message: "Provide email and password",
         error: true,
-        status: false,
+        success: false,
       });
     }
 
@@ -125,14 +126,14 @@ export async function LoginController(req, res) {
     if (!user) {
       return res.status(400).json({
         message: "Email is not Registered",
-        status: false,
+        success: false,
         error: true,
       });
     }
     if (user.status !== "Active") {
       return res.status(400).json({
         message: "Contact Admin for access",
-        status: false,
+        success: false,
         error: true,
       });
     }
@@ -142,7 +143,7 @@ export async function LoginController(req, res) {
     if (!checkPassword) {
       return res.status(400).json({
         message: "Check Your password",
-        status: false,
+        success: false,
         error: true,
       });
     }
@@ -162,8 +163,14 @@ export async function LoginController(req, res) {
       semSite: "None",
     };
 
-    res.cookie("accessToken", accessToken, cookieOptions);
-    res.cookie("refreshToken", refreshToken, cookieOptions);
+    res.cookie("accessToken", accessToken, {
+      ...cookieOptions,
+      maxAge: 15 * 60 * 1000,
+    }); //15 mins
+    res.cookie("refreshToken", refreshToken, {
+      ...cookieOptions,
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    }); // 7 days
 
     return res.json({
       message: " Login Successfull",
@@ -178,11 +185,12 @@ export async function LoginController(req, res) {
     return res.status(500).json({
       message: error.message || error,
       error: true,
-      status: false,
+      success: false,
     });
   }
 }
 
+//user Logout
 export async function LogoutController(req, res) {
   try {
     const userId = req.userId; // middleware
@@ -212,20 +220,20 @@ export async function LogoutController(req, res) {
 
     return res.status(200).json({
       message: " Logout Successfull",
-      status: true,
+      success: true,
       error: false,
     });
   } catch (error) {
     return res.status(500).json({
       message: error.message || error,
-      status: false,
+      success: false,
       error: true,
     });
   }
 }
 
 //refresh token controller
-export async function refreshToken(req, res) {
+export async function RefreshToken(req, res) {
   try {
     const token =
       req.cookies.refreshToken || req?.headers?.authorization?.split(" ")[1];
@@ -233,7 +241,7 @@ export async function refreshToken(req, res) {
       return res.status(401).json({
         message: "Invalid token",
         error: true,
-        status: false,
+        success: false,
       });
     }
 
@@ -242,21 +250,22 @@ export async function refreshToken(req, res) {
       process.env.REFRESH_TOKEN_SECRET_KEY
     );
 
-    if (verifyToken) {
+    if (!verifyToken) {
       return res.status(401).json({
-        message: "token is expired",
+        message: "Invalid or expired refresh token",
         error: true,
-        status: false,
+        success: false,
       });
     }
-
+    //generate a new access token
     const userId = verifyToken?._id;
-
     const newAccessToken = await generateRefreshtoken(userId);
+
     const cookieOptions = {
       httpOnly: true,
       secure: true,
       sameSite: "None",
+      maxAge: 15 * 60 * 1000, // 15 mins
     };
 
     res.cookie("accessToken", newAccessToken, cookieOptions);
@@ -264,7 +273,7 @@ export async function refreshToken(req, res) {
     return res.json({
       message: "New access Token Genarated",
       error: false,
-      status: true,
+      success: true,
       data: {
         accessToken: newAccessToken,
       },
@@ -272,7 +281,7 @@ export async function refreshToken(req, res) {
   } catch (error) {
     return res.status(500).json({
       message: error.message || error,
-      status: false,
+      success: false,
       error: true,
     });
   }
@@ -283,11 +292,15 @@ export async function ForgotPassword(req, res) {
   try {
     const { email } = req.body;
 
+    if (!email) {
+      return res.status(400).json({ error: "Email is required" });
+    }
+
     const user = await userModel.findOne({ email });
     if (!user) {
       return res.status(400).json({
         message: "Email not available",
-        status: false,
+        success: false,
         error: true,
       });
     }
@@ -312,12 +325,228 @@ export async function ForgotPassword(req, res) {
     return res.json({
       message: "Check your email",
       error: false,
-      status: true,
+      success: true,
     });
   } catch (error) {
     return res.status(500).json({
       message: error.message || error,
-      status: false,
+      success: false,
+      error: true,
+    });
+  }
+}
+
+//forgot password verification
+export async function VerifyForgotPassword(req, res) {
+  try {
+    const { email, otp } = req.body;
+
+    if (!email || !otp) {
+      return res.status(400).json({
+        message: "Provide required fields email and password",
+        error: true,
+        success: false,
+      });
+    }
+    const user = await userModel.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "Email is not found",
+        success: false,
+        error: true,
+      });
+    }
+
+    const currentTime = new Date().toISOString();
+
+    if (!user.forgot_password_expried || !user.forgot_password_otp) {
+      return res.status(400).json({
+        message: "OTP or expiration not set for this user.",
+        success: false,
+        error: true,
+      });
+    }
+
+    if (new Date(user.forgot_password_expried) < new Date(currentTime)) {
+      return res.status(400).json({
+        message: "The OTP is expired.",
+        success: false,
+        error: true,
+      });
+    }
+
+    if (otp !== user.forgot_password_otp) {
+      return res.status(400).json({
+        message: "Enter a Valid Otp",
+        error: true,
+        success: false,
+      });
+    }
+
+    //update the database with empty strings
+    await userModel.findByIdAndUpdate(user?._id, {
+      forgot_password_expried: "",
+      forgot_password_otp: "",
+    });
+    return res.status(200).json({
+      message: "verification Successful",
+      status: true,
+      error: false,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      success: false,
+      error: true,
+    });
+  }
+}
+
+//reseting password
+export async function ResetPassword(req, res) {
+  try {
+    const { email, newPassword, confirmPassword } = req.body;
+
+    if (!email || !newPassword || !confirmPassword) {
+      return res.status(400).json({
+        message: "Provide the email and password, confirmPassword",
+        success: false,
+        error: false,
+      });
+    }
+
+    const user = await userModel.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "email doesn't exsist",
+        success: false,
+        error: true,
+      });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({
+        message: "Passwords doen't match",
+        success: false,
+        error: true,
+      });
+    }
+    // hasing password using bcrypt
+    const salt = await bcrypt.genSalt(10);
+    const newPasswordHashed = await bcrypt.hash(newPassword, salt);
+
+    const updatePass = await userModel.findByIdAndUpdate(user._id, {
+      password: newPasswordHashed,
+    });
+
+    return res.status(200).json({
+      message: "password Reseted successful",
+      success: true,
+      error: false,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || "Internal Server Error",
+      success: false,
+      error: true,
+    });
+  }
+}
+//sending the user details
+export async function userDetails(req, res) {
+  try {
+    const userId = req.userId;
+
+    const user = await userModel
+      .findById(userId)
+      .select("-password -refresh_token");
+
+    return res.json({
+      message: "user details",
+      data: user,
+      error: false,
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      success: false,
+      error: true,
+    });
+  }
+}
+
+export async function uploadAvatar(req, res) {
+  try {
+    const userId = req.userId; // auth middleware
+    const image = req.file; // multer middleware
+
+    const upload = await cloudinaryImageUpload(image);
+    console.log("image", image);
+    const updateUser = await userModel.findByIdAndUpdate(userId, {
+      avatar: upload.url,
+    });
+
+    return res.status(200).json({
+      message: "Image uploaded successful",
+      success: true,
+      error: false,
+      data: {
+        _id: userId,
+        avatar: upload.url,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      success: false,
+      error: true,
+    });
+  }
+}
+
+export async function updatedUserDetails(req, res) {
+  try {
+    const userId = req.userId; // auth middleware
+    const { email, name, mobile, password } = req.body;
+
+    let hasPassword = "";
+
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      hasPassword = await bcrypt.hash(password, salt);
+    }
+
+    const updateUser = await userModel.updateOne(
+      { _id: userId },
+      {
+        ...(name && { name: name }),
+        ...(email && { email: email }),
+        ...(mobile && { mobile: mobile }),
+        ...(password && { password: hasPassword }),
+      }
+    );
+
+    if (!updateUser) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false,
+        error: true,
+      });
+    }
+
+    return res.status(200).json({
+      message: "updated Successfully",
+      success: true,
+      error: false,
+      data: updateUser,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      success: false,
       error: true,
     });
   }

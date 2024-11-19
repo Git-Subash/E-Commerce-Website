@@ -11,12 +11,9 @@ import { Input } from "@/components/ui/input";
 import { SummaryApi } from "@/constants/SummaryApi";
 import { useToast } from "@/hooks/use-toast";
 import Axios from "@/lib/Axios";
-import fetchUserDetails from "@/lib/fetchUserDetails";
-import { setUserDetails } from "@/store/userSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 
@@ -25,50 +22,34 @@ const FormSchema = z.object({
     .string()
     .min(1, { message: "This field has to be filled." })
     .email("This is not a valid Email."),
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters long." }),
 });
 
-export default function Login() {
+export default function ForgotPassword() {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       email: "",
-      password: "",
     },
   });
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       const response = await Axios({
-        ...SummaryApi.login,
+        ...SummaryApi.forgot_password,
         data: data,
       });
 
       if (response.data) {
-        localStorage.setItem("accessToken", response.data.data.accessToken);
-        localStorage.setItem("refreshToken", response.data.data.refreshToken);
-
-        const userDetails = await fetchUserDetails();
-        if (userDetails?.error) {
-          toast({
-            variant: "destructive",
-            title: "Error fetching user details",
-            description: userDetails.message,
-          });
-        } else {
-          dispatch(setUserDetails(userDetails.data));
-        }
+        toast({
+          variant: "default",
+          title: "Otp Generated successfully ",
+          description: "Welcome back! You have successfully logged in.",
+        });
       }
       form.reset();
-      navigate("/");
-      toast({
-        variant: "default",
-        title: "Login successful ",
-        description: "Welcome back! You have successfully logged in.",
+      navigate("/verify-forgot-password-otp", {
+        state: { email: data.email },
       });
     } catch (error) {
       toast({
@@ -82,7 +63,7 @@ export default function Login() {
     <div className="my-10 flex items-center justify-center w-full dark:bg-gray-950">
       <div className="bg-white flex flex-col gap-10 dark:bg-gray-900 shadow-2xl rounded-lg px-8  max-w-xl">
         <h1 className="text-3xl mt-10 font-bold text-center mb-4 dark:text-gray-200">
-          Welcome Back!
+          Forgot password
         </h1>
 
         <Form {...form}>
@@ -111,51 +92,23 @@ export default function Login() {
                 )}
               />
             </div>
-            <div className="mb-4">
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="block  text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 ">
-                      Password
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        className="shadow-sm rounded-md w-full px-4 py-6 border border-gray-300 focus:outline-none focus:border-none focus:ring-indigo-500 focus:border-indigo-500"
-                        placeholder="Enter your password"
-                        {...field}
-                      />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Link
-                to="/forgot-password"
-                className="text-xs  text-gray-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                Forgot Password?
-              </Link>
-            </div>
-
             <Button
               type="submit"
               disabled={form.formState.isSubmitting}
               className="px-8 py-6 w-full rounded-md bg-teal-500 text-white font-bold transition duration-200 hover:bg-white hover:text-black border-2 border-transparent hover:border-teal-500">
-              Login{" "}
+              Reset Password
               {form.formState.isSubmitting && (
                 <Loader className="ml-2 h-6 w-6 animate-spin" />
               )}
             </Button>
             <div className="w-full flex justify-center mt-4">
               <Link
-                to="/register"
+                to="/login"
                 className="text-sm  flex gap-1  text-blue-500 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                 <span className="text-foreground hover:no-underline">
-                  Don't have an account yet?
+                  Remember your password?
                 </span>
-                Sign up
+                Sign in
               </Link>
             </div>
           </form>

@@ -16,7 +16,7 @@ const Port = process.env.PORT || 3000; // Fallback port in case process.env.PORT
 app.use(
   cors({
     credentials: true,
-    origin: process.env.CLIENT_URL || "http://localhost:3000", // Default for development
+    origin: process.env.CLIENT_URL, // Default for development
   })
 );
 app.use(express.json());
