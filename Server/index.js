@@ -6,7 +6,8 @@ import morgan from "morgan";
 import connectDB from "./config/connectDB.js";
 import dotenv from "dotenv";
 dotenv.config();
-import userRouter from "./routes/userRouter.routes.js";
+import userRouter from "./routes/user.routes.js";
+import addressRouter from "./routes/address.routes.js";
 
 dotenv.config();
 
@@ -35,6 +36,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/user", userRouter);
+app.use("/api/address", addressRouter);
 
 // Connecting to the database and running server
 connectDB()

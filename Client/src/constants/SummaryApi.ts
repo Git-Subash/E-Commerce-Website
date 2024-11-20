@@ -33,4 +33,24 @@ export const SummaryApi = {
     url: "/api/user/user-details",
     method: "get",
   },
+  update_user_details: {
+    url: "/api/user/update-user",
+    method: "put",
+  },
+  add_address: {
+    url: "api/address/create",
+    method: "post",
+  },
+  get_address: {
+    url: "api/address/get",
+    method: "get",
+  },
+  update_address: {
+    url: "api/address/update",
+    method: "put",
+  },
+  disable_address: {
+    url: "api/address/delete",
+    method: "delete",
+  },
 };

@@ -26,7 +26,9 @@ const FormSchema = z
       .string()
       .min(1, { message: "This field has to be filled." })
       .email("This is not a valid Email."),
-    password: z.string().max(8, { message: "This field has to be filled." }),
+    password: z
+      .string()
+      .min(8, { message: "Password must be at least 8 characters long." }),
     confirmPassword: z
       .string()
       .max(8, { message: "This field has to be filled." }),

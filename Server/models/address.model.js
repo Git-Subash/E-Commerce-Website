@@ -2,11 +2,18 @@ import mongoose from "mongoose";
 
 const addressSchema = new mongoose.Schema(
   {
+    address_title: {
+      type: String,
+      default: "",
+    },
     address_line: {
       type: String,
       default: "",
     },
     city: {
+      type: String,
+    },
+    state: {
       type: String,
     },
     pincode: {
@@ -15,8 +22,16 @@ const addressSchema = new mongoose.Schema(
     country: {
       type: String,
     },
-    moblie: {
-      type: Number,
+    mobile: {
+      type: String,
+    },
+    status: {
+      type: Boolean,
+      default: true,
+    },
+    userId: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
     },
   },
   { timestamps: true }
