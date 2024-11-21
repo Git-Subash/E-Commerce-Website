@@ -159,8 +159,8 @@ export async function LoginController(req, res) {
 
     const cookieOptions = {
       httpOnly: true,
-      secure: true,
-      semSite: "None",
+      secure: process.env.NODE_ENV === "production", // Set to true in production (HTTPS)
+      sameSite: process.env.NODE_ENV === "production" ? "Strict" : "Lax",
     };
 
     res.cookie("accessToken", accessToken, {
@@ -197,8 +197,8 @@ export async function LogoutController(req, res) {
 
     const cookieOptions = {
       httpOnly: true,
-      secure: true,
-      semSite: "None",
+      secure: process.env.NODE_ENV === "production", // Set to true in production (HTTPS)
+      sameSite: "Strict",
     };
 
     res.clearCookie("accessToken", cookieOptions);
@@ -263,8 +263,8 @@ export async function RefreshToken(req, res) {
 
     const cookieOptions = {
       httpOnly: true,
-      secure: true,
-      sameSite: "None",
+      secure: process.env.NODE_ENV === "production", // Set to true in production (HTTPS)
+      sameSite: process.env.NODE_ENV === "production" ? "Strict" : "Lax",
       maxAge: 15 * 60 * 1000, // 15 mins
     };
 

@@ -30,23 +30,21 @@ const GlobleProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchAddress = async () => {
     try {
-      const response = await Axios({ ...SummaryApi.get_address });
+      const response = await Axios({
+        ...SummaryApi.get_address,
+      });
       const { data: responseData } = response;
 
-      if (responseData.success) {
+      if (responseData.data) {
         dispatch(handleAddAddress(responseData.data));
-        console.log(response.data);
       }
     } catch (error) {
       console.error("Error fetching address:", error);
-      // Handle errors, e.g., show a toast
     }
   };
 
   React.useEffect(() => {
-    if (user && user._id) {
-      fetchAddress();
-    }
+    fetchAddress();
   }, [user]);
 
   return (

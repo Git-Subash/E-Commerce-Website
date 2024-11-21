@@ -18,8 +18,10 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/store/store";
+import { persist, RootState } from "@/store/store";
 import { logout } from "@/store/userSlice";
+import Axios from "@/lib/Axios";
+import { SummaryApi } from "@/constants/SummaryApi";
 
 export default function Navbar() {
   const user = useSelector((state: RootState) => state.user);
@@ -28,10 +30,21 @@ export default function Navbar() {
 
   const isLoggedIn = user?._id;
 
-  const handleLogout = () => {
-    localStorage.clear();
-    dispatch(logout());
-    navigate("/login"); // Change the route to your desired page
+  const handleLogout = async () => {
+    try {
+      const response = await Axios({
+        ...SummaryApi.logout,
+      });
+
+      console.log("Logout", response);
+      if (response.data) {
+        persist.purge(); // Ensure purge happens first
+        dispatch(logout()); // clear the redux store state
+        navigate("/login"); // navigate to loginPage}
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -115,8 +128,8 @@ export default function Navbar() {
                 <DropdownMenuTrigger>
                   <Avatar>
                     <AvatarImage
-                      //   src="https://github.com/shadcn.png"
-                      alt="@shadcn"
+                      src={user.avatar || "/default-avatar.png"}
+                      alt="avatar"
                     />
                     <AvatarFallback>SM</AvatarFallback>
                   </Avatar>

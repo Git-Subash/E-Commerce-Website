@@ -1,19 +1,15 @@
+import AddProfileImage from "@/components/AddProfileImage";
 import DialogForm from "@/components/DialogForm";
 import { Button } from "@/components/ui/button";
 import { SummaryApi } from "@/constants/SummaryApi";
 import { useToast } from "@/hooks/use-toast";
 import Axios from "@/lib/Axios";
+import fetchUserDetails from "@/lib/fetchUserDetails";
 import { RootState } from "@/store/store";
+import { setUserDetails } from "@/store/userSlice";
 import { UseFormReturn } from "react-hook-form";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { z } from "zod";
-
-// const ACCEPTED_IMAGE_TYPES = [
-//   "image/jpeg",
-//   "image/jpg",
-//   "image/png",
-//   "image/webp",
-// ];
 
 const ProfileSchema = z.object({
   name: z.string().min(2, {
@@ -30,19 +26,12 @@ const ProfileSchema = z.object({
     .refine((value) => !value || value.length >= 8, {
       message: "Password must be at least 8 characters long.",
     }),
-  // image: z
-
-  //   .custom<FileList>((val) => val instanceof FileList, "Required")
-  //   .refine(
-  //     (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-  //     ".jpg, .jpeg, .png and .webp files are accepted."
-  //   )
-  //   .refine((files) => files.length > 0, `Required`),
 });
 
 export default function ProfilePage() {
   const user = useSelector((state: RootState) => state?.user);
   const { toast } = useToast();
+  const dispatch = useDispatch();
 
   async function handleSubmit(
     data: z.infer<typeof ProfileSchema>,
@@ -63,10 +52,14 @@ export default function ProfilePage() {
             "Your account has been created successfully. Welcome aboard!",
         });
         closeDialog();
-        //updating  the loacal storage
-        const updateUser = { ...user, ...data };
-        localStorage.setItem("user", JSON.stringify(updateUser));
-        window.location.reload(); //reloading the window
+        const userDetails = await fetchUserDetails();
+        if (userDetails?.data) {
+          dispatch(setUserDetails(userDetails.data));
+          window.location.reload();
+          console.log("User details fetched successfully:");
+        } else {
+          console.error("Error fetching user details:");
+        }
       }
     } catch (error) {
       form.setError("name", { type: "manual", message: "Submission failed." });
@@ -84,11 +77,7 @@ export default function ProfilePage() {
         {user.role}
       </p>
       <h1 className="text-3xl font-semibold py-4 border-b ">Your Profile</h1>
-      <img
-        src="https://github.com/shadcn.png"
-        alt="avatar"
-        className="w-24 mt-10 h-24 m-4"
-      />
+      <AddProfileImage />
       <div className="mt-12 ">
         <h2 className="font-medium text-lg my-2">Name</h2>
         <p className="my-2">{user?.name}</p>

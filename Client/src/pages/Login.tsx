@@ -49,27 +49,22 @@ export default function Login() {
       });
 
       if (response.data) {
-        localStorage.setItem("accessToken", response.data.data.accessToken);
-        localStorage.setItem("refreshToken", response.data.data.refreshToken);
-
+        form.reset();
+        navigate("/");
+        //adding the userdetails to the persist
         const userDetails = await fetchUserDetails();
-        if (userDetails?.error) {
-          toast({
-            variant: "destructive",
-            title: "Error fetching user details",
-            description: userDetails.message,
-          });
-        } else {
+        if (userDetails?.data) {
           dispatch(setUserDetails(userDetails.data));
+          console.log("User details fetched successfully:");
+        } else {
+          console.error("Error fetching user details:");
         }
+        toast({
+          variant: "default",
+          title: "Login successful ",
+          description: "Welcome back! You have successfully logged in.",
+        });
       }
-      form.reset();
-      navigate("/");
-      toast({
-        variant: "default",
-        title: "Login successful ",
-        description: "Welcome back! You have successfully logged in.",
-      });
     } catch (error) {
       toast({
         variant: "destructive",

@@ -9,6 +9,10 @@ export const SummaryApi = {
     url: "/api/user/login",
     method: "post",
   },
+  logout: {
+    url: "/api/user/logout",
+    method: "get",
+  },
   verify_email: {
     url: "/api/user/verify-email",
     method: "post",
@@ -28,6 +32,10 @@ export const SummaryApi = {
   refreshToken: {
     url: "api/user/refresh-token",
     method: "post",
+  },
+  upload_avatar: {
+    url: "api/user/upload-avatar",
+    method: "put",
   },
   userDetails: {
     url: "/api/user/user-details",

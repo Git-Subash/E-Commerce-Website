@@ -6,15 +6,18 @@ const fetchUserDetails = async () => {
     const res = await Axios({
       ...SummaryApi.userDetails,
     });
-    if (res.status === 200) {
+    if (res.status === 200 && res.data) {
       // Handle success response
       return res.data; // Return data to the calling function
     } else {
       // Handle unexpected status codes
-      return { error: true, message: "Unexpected response status." };
+      return {
+        error: true,
+        message: res?.data?.message || "Unexpected response structure.",
+      };
     }
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching user details:", error);
   }
 };
 

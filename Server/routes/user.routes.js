@@ -21,7 +21,7 @@ userRouter.post("/register", registerController);
 userRouter.post("/verify-email", verifyEmailController);
 userRouter.post("/login", LoginController);
 userRouter.get("/logout", auth, LogoutController);
-userRouter.put("/upload-avatar", auth, upload.single("avatar"), uploadAvatar);
+userRouter.put("/upload-avatar", auth, upload.single("image"), uploadAvatar);
 userRouter.put("/update-user", auth, updatedUserDetails);
 userRouter.put("/forgot-password", ForgotPassword);
 userRouter.put("/verify-forgot-password-otp", VerifyForgotPassword);
