@@ -77,7 +77,7 @@ export default function AddAddress() {
   return (
     <DialogForm
       button={
-        <Button className="px-8 sm:px-10  py-6   w-full text-xl tracking-wider rounded-md bg-teal-500 text-white font-bold transition duration-200 hover:bg-white hover:text-black border-2 border-transparent hover:border-teal-500">
+        <Button className="px-8 sm:px-10  py-6   w-full text-xl tracking-wider rounded-md bg-primary text-white font-bold transition duration-200 hover:bg-white hover:text-black border-2 border-transparent hover:border-primary">
           Add address
         </Button>
       }

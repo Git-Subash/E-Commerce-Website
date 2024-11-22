@@ -60,8 +60,8 @@ export default function ForgotPassword() {
     }
   }
   return (
-    <div className="my-10 flex items-center justify-center w-full dark:bg-gray-950">
-      <div className="bg-white flex flex-col gap-10 dark:bg-gray-900 shadow-2xl rounded-lg px-8  max-w-xl">
+    <div className="py-10 flex items-center justify-center w-full dark:bg-gray-950">
+      <div className="bg-white flex flex-col gap-10 dark:bg-gray-900 shadow-[rgba(0,_0,_0,_0.4)_0px_30px_90px] rounded-xl px-8  max-w-xl">
         <h1 className="text-3xl mt-10 font-bold text-center mb-4 dark:text-gray-200">
           Forgot password
         </h1>
@@ -95,7 +95,7 @@ export default function ForgotPassword() {
             <Button
               type="submit"
               disabled={form.formState.isSubmitting}
-              className="px-8 py-6 w-full rounded-md bg-teal-500 text-white font-bold transition duration-200 hover:bg-white hover:text-black border-2 border-transparent hover:border-teal-500">
+              className="px-8 py-6 w-full rounded-md bg-primary text-white font-bold transition duration-200 hover:bg-white hover:text-black border-2 border-transparent hover:border-primary">
               Reset Password
               {form.formState.isSubmitting && (
                 <Loader className="ml-2 h-6 w-6 animate-spin" />

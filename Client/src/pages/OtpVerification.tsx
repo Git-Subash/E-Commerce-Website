@@ -80,8 +80,8 @@ export default function OtpVerification() {
   }
 
   return (
-    <div className="my-10 flex items-center justify-center w-full dark:bg-gray-950">
-      <div className="bg-white flex flex-col gap-10 dark:bg-gray-900 shadow-2xl rounded-lg px-8  max-w-xl">
+    <div className="py-10 flex items-center justify-center w-full dark:bg-gray-950">
+      <div className="bg-white flex flex-col gap-10 dark:bg-gray-900 shadow-[rgba(0,_0,_0,_0.4)_0px_30px_90px] rounded-xl px-8  max-w-xl">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -135,7 +135,7 @@ export default function OtpVerification() {
             <Button
               type="submit"
               disabled={form.formState.isSubmitting}
-              className="px-8 mt-5 py-6 w-full rounded-md bg-teal-500 text-white font-bold transition duration-200 hover:bg-white hover:text-black border-2 border-transparent hover:border-teal-500">
+              className="px-8 mt-5 py-6 w-full rounded-md bg-primary text-white font-bold transition duration-200 hover:bg-white hover:text-black border-2 border-transparent hover:border-primary">
               Verify
               {form.formState.isSubmitting && (
                 <Loader className="ml-2 h-6 w-6 animate-spin" />

@@ -74,10 +74,7 @@ export default function AddressPage() {
                   variant="destructive">
                   Delete
                 </Button>
-                <EditAddress
-                  button={<Button className="">Edit</Button>}
-                  data={item}
-                />
+                <EditAddress button={<Button>Edit</Button>} data={item} />
               </div>
             </div>
           </label>

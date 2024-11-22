@@ -12,7 +12,7 @@ const links = [
 export default function Side() {
   const location = useLocation();
   const user = useSelector((state: RootState) => state.user);
-  let path = location.pathname;
+
   return (
     <aside className=" hidden  w-full  md:flex  max-h-screen flex-col gap-2">
       <div className="flex   h-14 items-center border-b  lg:h-[60px] ">
@@ -27,7 +27,7 @@ export default function Side() {
             <AvatarFallback>SM</AvatarFallback>
           </Avatar>
           <h1 className="flex flex-col">
-            Account{" "}
+            Account
             <span className="text-xs flex hover:text-blue-600 items-center  gap-1">
               {user.name}
               <SquareArrowOutUpRight className="w-2.5 h-2.5 mt-0.5" />{" "}
@@ -42,9 +42,9 @@ export default function Side() {
               key={index}
               to={item.to}
               className={
-                path === item.to
-                  ? "flex items-center gap-3 rounded-lg bg-gray-50 px-3 py-2.5 hover:text-primary transition-all hover:bg-accent"
-                  : "flex scale-100 items-center gap-3 rounded-lg px-3 py-2.5 hover:text-primary  hover:bg-accent"
+                location.pathname === item.to
+                  ? "flex items-center gap-3 rounded-lg bg-primary/50 px-3 py-2.5  transition-all "
+                  : "flex scale-100 items-center gap-3  rounded-lg px-3 py-2.5   hover:bg-accent"
               }>
               <Package className="h-4 w-4" />
               {item.name}
@@ -53,6 +53,5 @@ export default function Side() {
         </nav>
       </div>
     </aside>
-    // </aside>
   );
 }

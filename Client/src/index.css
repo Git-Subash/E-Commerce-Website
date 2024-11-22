@@ -6,6 +6,8 @@
 
 @layer base {
   :root {
+    --gradient: #14b8a6;
+
     --background: 0 0% 100%;
 
     --foreground: 224 71.4% 4.1%;
@@ -18,13 +20,11 @@
 
     --popover-foreground: 224 71.4% 4.1%;
 
-    --primary: 220.9 39.3% 11%;
+    --primary: 128 89% 31%;
+    --primary-foreground: 128 8.9% 96.55%;
 
-    --primary-foreground: 210 20% 98%;
-
-    --secondary: 220 14.3% 95.9%;
-
-    --secondary-foreground: 220.9 39.3% 11%;
+    --secondary: 128 44.5% 9.3%;
+    --secondary-foreground: 128 8.9% 96.55%;
 
     --muted: 220 14.3% 95.9%;
 
@@ -42,7 +42,7 @@
 
     --input: 220 13% 91%;
 
-    --ring: 224 71.4% 4.1%;
+    --ring: 216 12.2% 83.9%;
 
     --chart-1: 12 76% 61%;
 
