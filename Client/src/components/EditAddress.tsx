@@ -77,6 +77,7 @@ export default function EditAddress({
           description:
             "Your address has been added to the account successfully.",
         });
+        window.location.reload();
         closeDialog();
         fetchAddress();
       }
@@ -101,7 +102,7 @@ export default function EditAddress({
       schema={addressSchema}
       defaultValues={{
         _id: data._id || "",
-        address_title: data.address_line || "",
+        address_title: data.address_title || "",
         address_line: data.address_line || "",
         mobile: data.mobile || "",
         city: data.city || "",

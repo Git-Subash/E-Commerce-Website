@@ -1,21 +1,53 @@
-import { RootState } from "@/store/store";
-import { Package, SquareArrowOutUpRight } from "lucide-react";
-import { useSelector } from "react-redux";
+import { cn } from "@/lib/utils";
+import { MapPin, ShoppingBag, User } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 const links = [
-  { name: "Orders", to: "/profile-page/order-details" },
-  { name: "Address", to: "/profile-page/address-details" },
+  {
+    name: "My Profile",
+    to: "/profile-page",
+    logo: <User className="h-5 w-5" />,
+  },
+  {
+    name: "Orders",
+    to: "/profile-page/order-details",
+    logo: <ShoppingBag className="h-5 w-5" />,
+  },
+  {
+    name: "Address",
+    to: "/profile-page/address-details",
+    logo: <MapPin className="h-5 w-5" />,
+  },
 ];
 
 export default function Side() {
   const location = useLocation();
-  const user = useSelector((state: RootState) => state.user);
-
   return (
     <aside className=" hidden  w-full  md:flex  max-h-screen flex-col gap-2">
-      <div className="flex   h-14 items-center border-b  lg:h-[60px] ">
+      <div className="flex-1 my-10">
+        <nav className="group grid items-start gap-2 px-2 text-sm font-medium lg:px-4">
+          {links.map((item, index) => (
+            <Link
+              key={index}
+              to={item.to}
+              className={cn(
+                "flex items-center  gap-3 rounded-lg  transition-all p-2  mx-2 ",
+                location.pathname === item.to
+                  ? " bg-primary/20  "
+                  : "hover:bg-accent"
+              )}>
+              {item.logo}
+              {item.name}
+            </Link>
+          ))}
+        </nav>
+      </div>
+    </aside>
+  );
+}
+
+{
+  /* <div className="flex   items-center  ">
         <Link
           to="/profile-page/user-details"
           className="flex items-center px-4 gap-3 font-semibold">
@@ -34,24 +66,5 @@ export default function Side() {
             </span>
           </h1>
         </Link>
-      </div>
-      <div className="flex-1">
-        <nav className="group grid items-start gap-2 px-2 text-sm font-medium lg:px-4">
-          {links.map((item, index) => (
-            <Link
-              key={index}
-              to={item.to}
-              className={
-                location.pathname === item.to
-                  ? "flex items-center gap-3 rounded-lg bg-primary/50 px-3 py-2.5  transition-all "
-                  : "flex scale-100 items-center gap-3  rounded-lg px-3 py-2.5   hover:bg-accent"
-              }>
-              <Package className="h-4 w-4" />
-              {item.name}
-            </Link>
-          ))}
-        </nav>
-      </div>
-    </aside>
-  );
+      </div> */
 }

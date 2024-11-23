@@ -123,22 +123,51 @@ export async function updateAddressController(req, res) {
     });
   }
 }
+export async function updateAddressStatus(req, res) {
+  try {
+    const userId = req.userId; //auth middleware
+    const { _id, status } = req.body;
+
+    if (status) {
+      // Set all other addresses to `false` for this user
+      await addressModel.updateMany(
+        { userId, _id: { $ne: _id } }, // All addresses except the current one
+        { $set: { status: false } }
+      );
+    }
+    // Update the selected address status
+    const updatedAddress = await addressModel.findByIdAndUpdate(
+      _id,
+      { status },
+      { new: true }
+    );
+
+    return res.json({
+      message: "status updated successfull ",
+      error: false,
+      success: true,
+      data: updatedAddress,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message || error,
+      success: false,
+      error: true,
+    });
+  }
+}
+
 export async function deleteAddressController(req, res) {
   try {
     const userId = req.userId; //auth middleware
     const { _id } = req.body;
-    const disableAddress = await addressModel.updateOne(
-      { _id: _id, userId },
-      {
-        status: false,
-      }
-    );
 
+    const deleteAddress = await addressModel.deleteOne({ _id: _id, userId });
     return res.json({
       message: "Address remove",
       error: false,
       success: true,
-      data: disableAddress,
+      data: deleteAddress,
     });
   } catch (error) {
     res.status(500).json({

@@ -1,77 +1,64 @@
-import { Button } from "@/components/ui/button";
-import { Menu, Package, SquareArrowOutUpRight } from "lucide-react";
-
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { RootState } from "@/store/store";
+import { cn } from "@/lib/utils";
+import { AlignRight, MapPin, ShoppingBag, User } from "lucide-react";
 import React from "react";
-import { useSelector } from "react-redux";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Separator } from "./ui/separator";
 
 const links = [
-  { name: "Orders", to: "/profile-page/order-details" },
-  { name: "Address", to: "/profile-page/address-details" },
+  {
+    name: "My Profile",
+    to: "/profile-page",
+    logo: <User className="h-5 w-5" />,
+  },
+  {
+    name: "Orders",
+    to: "/profile-page/order-details",
+    logo: <ShoppingBag className="h-5 w-5" />,
+  },
+  {
+    name: "Address",
+    to: "/profile-page/address-details",
+    logo: <MapPin className="h-5 w-5" />,
+  },
 ];
-
 export default function Header() {
-  const user = useSelector((state: RootState) => state.user);
   const [isSheetOpen, isSetSheetOpen] = React.useState<boolean>(false);
   const location = useLocation();
 
   return (
-    <section className="w-full">
-      <Sheet
-        open={isSheetOpen}
-        onOpenChange={(isOpen) => isSetSheetOpen(isOpen)}>
-        <SheetTrigger asChild>
-          <Button variant="outline" size="icon" className=" md:hidden ml-4 ">
-            <Menu className="h-5 w-5 " />
-            <span className="sr-only">Toggle navigation menu</span>
-          </Button>
-        </SheetTrigger>
-        <SheetContent side="left" className="flex flex-col !w-full pt-0">
-          <nav className="grid gap-2 text-lg font-medium mt-3">
-            <div className="flex  h-14 items-center lg:h-[60px] ">
-              <Link
-                to="/profile-page/user-details"
-                onClick={() => isSetSheetOpen(false)}
-                className="flex items-center px-4 gap-3 font-semibold">
-                <Avatar>
-                  <AvatarImage
-                    src={user.avatar || "/default-avatar.png"}
-                    alt="avatar"
-                  />
-                  <AvatarFallback>SM</AvatarFallback>
-                </Avatar>
-                <h1 className="flex flex-col">
-                  Account{" "}
-                  <span className="text-xs flex hover:text-blue-600 items-center  gap-1">
-                    {user.name}
-                    <SquareArrowOutUpRight className="w-2.5 h-2.5 mt-0.5" />{" "}
-                  </span>
-                </h1>
-              </Link>
-            </div>
-            <Separator />
-
-            {links.map((item, index) => (
-              <Link
-                key={index}
-                to={item.to}
-                onClick={() => isSetSheetOpen(false)}
-                className={
-                  location.pathname === item.to
-                    ? "flex items-center gap-3 rounded-lg bg-primary/50 px-3 py-2.5  transition-all "
-                    : "flex scale-100 items-center gap-3  rounded-lg px-3 py-2.5   hover:bg-accent"
-                }>
-                <Package className="h-4 w-4" />
-                {item.name}
-              </Link>
-            ))}
-          </nav>
-        </SheetContent>
-      </Sheet>
+    <section className="w-full relative mt-2 ">
+      <div className="flex w-full justify-between items-center md:hidden ">
+        <h1 className="text-xl px-4 font-semibold">Account Setting</h1>
+        <Sheet
+          open={isSheetOpen}
+          onOpenChange={(isOpen) => isSetSheetOpen(isOpen)}>
+          <SheetTrigger asChild>
+            <AlignRight className="h-7 w-7 cursor-pointer  " />
+          </SheetTrigger>
+          <SheetContent side="left" className="flex flex-col  !w-full p-0 ">
+            <nav className="grid gap-2 text-lg font-medium mt-3 mx-10">
+              <h1 className="text-xl  font-semibold py-4 mb-4 border-b">
+                Account Settings
+              </h1>
+              {links.map((item, index) => (
+                <Link
+                  key={index}
+                  to={item.to}
+                  onClick={() => isSetSheetOpen(false)}
+                  className={cn(
+                    "flex items-center   gap-3 rounded-lg  transition-all p-2   ",
+                    location.pathname === item.to
+                      ? " bg-primary/50  "
+                      : "hover:bg-accent"
+                  )}>
+                  {item.logo}
+                  {item.name}
+                </Link>
+              ))}
+            </nav>
+          </SheetContent>
+        </Sheet>
+      </div>
 
       <div className="hidden md:block">
         <Outlet />

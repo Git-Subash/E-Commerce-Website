@@ -1,9 +1,8 @@
-import React from "react";
-import MaxWidthWrapper from "./MaxWidthWrapper";
-import { Link } from "react-router-dom";
 import { ArrowRight, Plus } from "lucide-react";
-import { Card } from "./ui/card";
+import { Link } from "react-router-dom";
+import MaxWidthWrapper from "./MaxWidthWrapper";
 import { Button } from "./ui/button";
+import { Card } from "./ui/card";
 
 const product = [
   { name: " Dairy, Bread & Eggs", to: "/", image: "/category-1.jpg" },

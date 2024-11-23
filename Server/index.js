@@ -9,6 +9,8 @@ dotenv.config();
 import userRouter from "./routes/user.routes.js";
 import addressRouter from "./routes/address.routes.js";
 import productRouter from "./routes/product.routes.js";
+import categoryRouter from "./routes/category.routes.js";
+import subCategoryRouter from "./routes/subCategory.routes.js";
 
 dotenv.config();
 
@@ -39,6 +41,8 @@ app.get("/", (req, res) => {
 app.use("/api/user", userRouter);
 app.use("/api/address", addressRouter);
 app.use("/api/product", productRouter);
+app.use("/api/category", categoryRouter);
+app.use("/api/sub-category", subCategoryRouter);
 
 // Connecting to the database and running server
 connectDB()

@@ -50,6 +50,7 @@ export default function AddProfileImage() {
   const user = useSelector((state: RootState) => state.user);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const dispatch = useDispatch();
+
   const { toast } = useToast();
   const form = useForm<z.infer<typeof imageSchema>>({
     resolver: zodResolver(imageSchema),
@@ -113,11 +114,11 @@ export default function AddProfileImage() {
         form.reset();
       }}>
       <DialogTrigger>
-        <div className="relative group  w-32   h-32 mt-10 ">
+        <div className="relative group  w-28 h-28   rounded-full border    ">
           <img
             src={user.avatar || "/default-avatar.png"}
             alt="avatar"
-            className="rounded-full w-32 h-32 object-cover object-center"
+            className="rounded-full w-28 h-28  object-contain object-center"
           />
           <UserRoundPen className="bg-gray-950/80 group-hover:block hidden text-white dark:text-gray-950 dark:bg-white absolute top-2 right-2  p-1.5 rounded-full" />
         </div>

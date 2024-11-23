@@ -57,7 +57,11 @@ export const SummaryApi = {
     url: "api/address/update",
     method: "put",
   },
-  disable_address: {
+  update_address_status: {
+    url: "api/address/update-stauts",
+    method: "put",
+  },
+  delete_address: {
     url: "api/address/delete",
     method: "delete",
   },

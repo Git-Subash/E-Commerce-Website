@@ -27,7 +27,7 @@ const addressSchema = new mongoose.Schema(
     },
     status: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     userId: {
       type: mongoose.Schema.ObjectId,

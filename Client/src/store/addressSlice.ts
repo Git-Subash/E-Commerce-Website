@@ -9,6 +9,7 @@ interface Address {
   country: string;
   mobile: string;
   pincode: string;
+  status?: boolean;
 }
 
 interface addressSlice {
@@ -26,9 +27,22 @@ const addressSlice = createSlice({
     handleAddAddress: (state, action) => {
       state.addressList = [...action.payload];
     },
+    deleteAddress: (state) => {
+      Object.assign(state, initialState);
+    },
+    updateAddressStatus: (state, action) => {
+      const { _id, status } = action.payload;
+
+      // Ensure only the selected address has `status: true`
+      state.addressList = state.addressList.map((address) => ({
+        ...address,
+        status: address._id === _id ? status : false,
+      }));
+    },
   },
 });
 
-export const { handleAddAddress } = addressSlice.actions;
+export const { handleAddAddress, updateAddressStatus, deleteAddress } =
+  addressSlice.actions;
 
 export default addressSlice.reducer;

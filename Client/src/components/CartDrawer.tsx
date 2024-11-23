@@ -1,16 +1,9 @@
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
+import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { RootState } from "@/store/store";
-import { ShoppingCartIcon, Trash2 } from "lucide-react";
+import { ShoppingCartIcon, Trash2, X } from "lucide-react";
 import React, { ReactNode } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -19,6 +12,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "./ui/card";
@@ -37,7 +31,12 @@ const cartItems = [
     image: "/category-3.jpg",
   },
   {
-    name: "Haldiram's Sev Bhijia dadsadsaddsad ",
+    name: "Haldiram's Sev Bhijia  ",
+    price: "$200",
+    image: "/category-6.jpg",
+  },
+  {
+    name: "Haldiram's Sev Bhijia  ",
     price: "$200",
     image: "/category-6.jpg",
   },
@@ -75,26 +74,22 @@ export default function CartDrawer({ button }: { button: ReactNode }) {
       }>
       <DrawerTrigger onClick={handleToast}>{button}</DrawerTrigger>
       <DrawerContent className="h-4/5 border-none">
-        <DrawerHeader className="drop-shadow-[0px_0px_20px_rgba(0,0,145,12)]"></DrawerHeader>
-        <Card className="!p-0 border-none  ">
+        <Card className="!p-0 border-none md:w-4/5  md:mx-auto  w-full ">
           <CardHeader className="flex justify-between mb-auto border-b">
             <CardTitle className="flex items-center justify-between   ">
               <span className="flex  items-center gap-2">
                 Shopping Cart <ShoppingCartIcon />
               </span>
-
-              <DrawerClose className="">
-                <Button variant="outline" className=" rounded-lg ">
-                  Continue Shopping
-                </Button>
-              </DrawerClose>
+              <X
+                onClick={() => isSetDrawerOpen(false)}
+                className="cursor-pointer"
+              />
             </CardTitle>
             <CardDescription>Total Price: $32133</CardDescription>
           </CardHeader>
-
-          <CardContent className="">
+          <CardContent>
             <Table className="mx-auto">
-              <ScrollArea className="h-[400px] w-full">
+              <ScrollArea className="h-[500px] w-full">
                 <TableBody>
                   {cartItems.map((item, index) => (
                     <TableRow
@@ -141,17 +136,22 @@ export default function CartDrawer({ button }: { button: ReactNode }) {
                 </TableBody>
               </ScrollArea>
             </Table>
+            <CardFooter className="flex mt-2 p-0 w-full flex-row items-center justify-between ">
+              <Button
+                variant="outline"
+                onClick={() => isSetDrawerOpen(false)}
+                className=" rounded-lg ">
+                Continue Shopping
+              </Button>
+              <Link
+                to={isLoggedIn ? "/cart" : "/login"}
+                onClick={() => isSetDrawerOpen(false)}
+                className={cn(buttonVariants({ variant: "default" }))}>
+                Proceed To Checkout
+              </Link>
+            </CardFooter>
           </CardContent>
         </Card>
-
-        <DrawerFooter className="flex justify-between ">
-          <Link
-            to={isLoggedIn ? "/cart" : "/login"}
-            onClick={() => isSetDrawerOpen(false)}
-            className={cn(buttonVariants({ variant: "default" }))}>
-            Proceed To Checkout
-          </Link>
-        </DrawerFooter>
       </DrawerContent>
     </Drawer>
   );

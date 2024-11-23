@@ -76,7 +76,9 @@ export default function DialogForm<T extends ZodType<any>>({
         form.reset();
       }}>
       <DialogTrigger asChild>{button}</DialogTrigger>
-      <DialogContent className={`max-w-lg rounded-md ${dialogClassName}`}>
+      <DialogContent
+        onClick={(e) => e.stopPropagation()}
+        className={`max-w-lg rounded-md ${dialogClassName}`}>
         <DialogHeader>
           <DialogTitle className="flex justify-start">{title}</DialogTitle>
           <DialogDescription className="flex justify-start">

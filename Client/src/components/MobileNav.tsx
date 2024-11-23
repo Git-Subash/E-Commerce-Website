@@ -131,7 +131,7 @@ export default function MobileNav({ button }: { button: ReactNode }) {
         {isLoggedIn ? (
           <>
             <Link
-              to="/profile-page/user-details"
+              to="/profile-page"
               onClick={() => setIsSheetOpen(false)}
               className={cn(
                 "!justify-start w-full",

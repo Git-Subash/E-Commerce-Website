@@ -1,12 +1,14 @@
 import AddProfileImage from "@/components/AddProfileImage";
 import DialogForm from "@/components/DialogForm";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { SummaryApi } from "@/constants/SummaryApi";
 import { useToast } from "@/hooks/use-toast";
 import Axios from "@/lib/Axios";
 import fetchUserDetails from "@/lib/fetchUserDetails";
 import { RootState } from "@/store/store";
 import { setUserDetails } from "@/store/userSlice";
+import { Pencil } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { z } from "zod";
@@ -32,6 +34,9 @@ export default function ProfilePage() {
   const user = useSelector((state: RootState) => state?.user);
   const { toast } = useToast();
   const dispatch = useDispatch();
+  const addressList = useSelector(
+    (state: RootState) => state.address.addressList
+  );
 
   async function handleSubmit(
     data: z.infer<typeof ProfileSchema>,
@@ -73,54 +78,122 @@ export default function ProfilePage() {
   }
   return (
     <section className=" relative px-2.5 md:px-4 w-full ">
-      <p className="lowercase absolute right-4 top-4  text-green-100 bg-green-500 px-3.5 py-1 rounded-md">
-        {user.role}
-      </p>
-      <h1 className="text-3xl font-semibold py-4 border-b ">Your Profile</h1>
-      <AddProfileImage />
-      <div className="mt-12 ">
-        <h2 className="font-medium text-lg my-2">Name</h2>
-        <p className="my-2">{user?.name}</p>
-        <h2 className="font-medium text-lg my-2">Email</h2>
-        <p className="my-2">{user?.email}</p>
-        <h2 className="font-medium text-lg my-2">Mobile</h2>
-        <p className="my-2">{user?.mobile}</p>
-        <h2 className="font-medium text-lg my-2">Status</h2>
-        <p className="my-2">{user?.status}</p>
+      <div className="flex pb-10 pt-10 md:pb-10 md:pt-0  justify-between items-center">
+        <h1 className="text-3xl px-4 font-semibold  ">My Profile</h1>
+
+        <DialogForm
+          button={
+            <Button
+              size="sm"
+              className="tracking-wider rounded-md bg-primary text-white font-bold transition duration-200 hover:bg-white hover:text-black border-2 border-transparent hover:border-primary">
+              <Pencil /> Edit
+            </Button>
+          }
+          title="Edit Profile"
+          description=" Make changes to your profile here. Click save when you're done."
+          schema={ProfileSchema}
+          defaultValues={{
+            name: user.name || "",
+            mobile: user.mobile || "",
+            email: user.email || "",
+            password: "",
+          }}
+          fields={[
+            { name: "name", label: "Name", placeholder: "Enter your Name" },
+            {
+              name: "email",
+              label: "Email",
+              placeholder: "Enter your email",
+            },
+            {
+              name: "mobile",
+              label: "Mobile",
+              placeholder: "Enter your mobile",
+              type: "number",
+            },
+            {
+              name: "password",
+              label: "Password",
+              placeholder: "Enter your password",
+              type: "password",
+            },
+          ]}
+          onSubmit={handleSubmit}
+        />
       </div>
-      <DialogForm
-        button={
-          <Button className="px-8 sm:px-10 mt-10 py-6  sm:w-auto w-full text-xl tracking-wider rounded-md bg-primary text-white font-bold transition duration-200 hover:bg-white hover:text-black border-2 border-transparent hover:border-primary">
-            Edit
-          </Button>
-        }
-        title="Edit Profile"
-        description=" Make changes to your profile here. Click save when you're done."
-        schema={ProfileSchema}
-        defaultValues={{
-          name: user.name || "",
-          mobile: user.mobile || "",
-          email: user.email || "",
-          password: "",
-        }}
-        fields={[
-          { name: "name", label: "Name", placeholder: "Enter your Name" },
-          { name: "email", label: "Email", placeholder: "Enter your email" },
-          {
-            name: "mobile",
-            label: "Mobile",
-            placeholder: "Enter your mobile",
-            type: "number",
-          },
-          {
-            name: "password",
-            label: "Password",
-            placeholder: "Enter your password",
-            type: "password",
-          },
-        ]}
-        onSubmit={handleSubmit}
-      />
+      {/* Profile Card */}
+      <Card className="flex   shadow-none relative flex-row  border-none p-3  gap-4 items-center  mr-auto w-auto ">
+        <div className=" flex justify-center items-center">
+          <AddProfileImage />
+        </div>
+        <div className=" ">
+          <h3 className="font-medium text-md ">
+            <span className="font-semibold text-xl">{user?.name} </span>
+          </h3>
+          <h3 className="font-medium text-sm text-secondary/50 ">
+            {user?.status}
+          </h3>
+          <h3 className="font-medium text-sm text-primary/50 ">
+            Role : {user?.role}
+          </h3>
+        </div>
+      </Card>
+      {/* Personal Information */}
+      <section className="py-6">
+        <h2 className="text-xl font-semibold mb-4 px-4">
+          Personal Information
+        </h2>
+        <Card className="p-4 shadow-none border-none">
+          <div className="mb-4">
+            <h3 className="text-secondary/50 font-semibold">Name</h3>
+            <p className="text-secondary/70 font-medium">{user?.name}</p>
+          </div>
+          <div className="mb-4">
+            <h3 className="text-secondary/50 font-semibold">Email</h3>
+            <p className="text-secondary/70 font-medium">{user?.email}</p>
+          </div>
+          <div>
+            <h3 className="text-secondary/50 font-semibold">Mobile</h3>
+            <p className="text-secondary/70 font-medium">{user?.mobile}</p>
+          </div>
+        </Card>
+      </section>
+      {/* Address Section */}
+      <section className="py-6 ">
+        <h2 className="text-xl font-semibold px-4 mb-4">Address</h2>
+        <Card className="p-4 shadow-none border-none">
+          {addressList
+            .filter((item) => item.status == true) // Show only active addresses
+            .map((item, index) => (
+              <div key={index} className="grid md:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <h3 className="text-secondary/50 font-semibold">
+                    Address Line
+                  </h3>
+                  <p className="text-secondary/70 font-medium">
+                    {item.address_line}
+                  </p>
+                </div>
+                <div>
+                  <h3 className="text-secondary/50 font-semibold">City</h3>
+                  <p className="text-secondary/70 font-medium">{item.city}</p>
+                </div>
+                <div>
+                  <h3 className="text-secondary/50 font-semibold">State</h3>
+                  <p className="text-secondary/70 font-medium">
+                    {item.state} - {item.pincode}
+                  </p>
+                </div>
+                <div>
+                  <h3 className="text-secondary/50 font-semibold">Country</h3>
+                  <p className="text-secondary/70 font-medium">
+                    {item.country}
+                  </p>
+                </div>
+              </div>
+            ))}
+        </Card>
+      </section>
     </section>
   );
 }

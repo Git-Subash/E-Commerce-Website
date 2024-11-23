@@ -5,8 +5,9 @@ import { persist, RootState } from "@/store/store";
 import { logout } from "@/store/userSlice";
 import {
   AlignRight,
-  LogIn,
+  House,
   LogOut,
+  ShoppingBag,
   ShoppingCartIcon,
   UserRound,
 } from "lucide-react";
@@ -22,6 +23,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 
@@ -31,6 +34,7 @@ export default function Navbar() {
   const dispatch = useDispatch();
 
   const isLoggedIn = user?._id;
+  const isAdmin = user.role == "ADMIN";
 
   const handleLogout = async () => {
     try {
@@ -119,28 +123,48 @@ export default function Navbar() {
                     <UserRound className="bg-primary/20 w-10 p-2 rounded-full h-10" />
                   </Link>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="hidden sm:block">
-                  <DropdownMenuItem>
+
+                <DropdownMenuContent
+                  align="end"
+                  className="hidden sm:block px-2.5">
+                  <DropdownMenuLabel className="text-md">
+                    Hi! {user.name}
+                    <p className="text-xs">{user.email}</p>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {isAdmin && (
+                    <DropdownMenuItem className="mt-1">
+                      <Link
+                        className="flex hover:text-secondary/70   items-center w-full  gap-2"
+                        to="/dashboard-page">
+                        <House />
+                        Dasboard
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuItem className="">
                     <Link
-                      className="flex items-center w-full  gap-2"
-                      to="/profile-page/user-details">
+                      className="flex items-center w-full  hover:text-secondary/70  gap-2"
+                      to="/profile-page/order-details">
+                      <ShoppingBag />
+                      Orders
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="mb-3">
+                    <Link
+                      className="flex items-center w-full hover:text-secondary/70   gap-2"
+                      to="/profile-page">
                       <UserRound />
                       Profile
                     </Link>
                   </DropdownMenuItem>
+                  <DropdownMenuSeparator className="text-secondary" />
                   <DropdownMenuItem>
-                    {!isLoggedIn ? (
-                      <Link
-                        className="flex items-center w-full gap-2"
-                        to="/login">
-                        <LogIn />
-                        Login
-                      </Link>
-                    ) : (
+                    {isLoggedIn && (
                       <Link
                         to="/login"
                         onClick={handleLogout}
-                        className="flex w-full items-start gap-2">
+                        className="flex w-full  text-primary items-start gap-2 py-1">
                         <LogOut /> Logout
                       </Link>
                     )}
