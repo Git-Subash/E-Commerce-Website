@@ -7,15 +7,17 @@ export default function Dasboard() {
   return (
     <GlobleContextProvider>
       <div>
-        <div className="grid  w-full   xl:grid-cols-[300px_1fr] ">
-          <div className="xl:flex hidden justify-center   xl:h-auto   border-r  rounded-lg   ">
+        <div className="grid w-full xl:grid-cols-[300px_1fr]">
+          <div className="hidden justify-center rounded-lg border-r xl:flex xl:min-h-screen">
             <DashboardSide />
           </div>
-          <div className="flex w-full overflow-hidden  h-20 xl:items-start   border-b items-center  xl:h-auto justify-center  px-5 xl:px-5  ">
-            <DashboardHeader />
-          </div>
-          <div className=" xl:hidden ">
-            <Outlet />
+          <div className="flex w-full flex-col">
+            <div className="flex h-16 items-center justify-center border-b px-5 xl:items-start xl:px-5">
+              <DashboardHeader />
+            </div>
+            <div className="px-5 md:mt-10">
+              <Outlet />
+            </div>
           </div>
         </div>
       </div>

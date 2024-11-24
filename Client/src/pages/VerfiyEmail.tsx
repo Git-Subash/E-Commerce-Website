@@ -54,8 +54,8 @@ export default function VerfiyEmail() {
     }
   };
   return (
-    <div className=" flex flex-col w-full h-[60vh] px-10 items-center justify-center ">
-      <div className="flex flex-col items-start  bg-background gap-6">
+    <div className="flex h-[60vh] w-full flex-col items-center justify-center px-10">
+      <div className="flex flex-col items-start gap-6 bg-background">
         <img src="/vite.svg" alt="logo" />
         <h1 className="text-2xl font-semibold">Confirm your account</h1>
         <p>
@@ -65,7 +65,7 @@ export default function VerfiyEmail() {
         {verify && (
           <p className={cn("mt-2", getColorClass(verify))}>{verify}</p>
         )}
-        <hr className="border-0 h-[1px] w-full bg-slate-600/20  " />
+        <hr className="h-[1px] w-full border-0 bg-slate-600/20" />
         <Button onClick={handleVerify} disabled={isLoading}>
           Confirm{isLoading && <Loader className="animate-spin" />}
         </Button>

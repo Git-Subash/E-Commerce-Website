@@ -11,7 +11,7 @@ import {
   Users,
 } from "lucide-react";
 import React from "react";
-import { Link, Outlet, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
   DropdownMenu,
@@ -29,13 +29,13 @@ export const dashboardLinks = [
     logo: <ShoppingCartIcon className="h-4 w-4" />,
   },
   {
-    name: "Categories",
-    to: "/dashboard-page/categoties",
+    name: "Category",
+    to: "/dashboard-page/category",
     logo: <List className="h-4 w-4" />,
   },
   {
-    name: "Sub_Categories",
-    to: "/dashboard-page/sub-categoties",
+    name: "Sub_Category",
+    to: "/dashboard-page/sub-category",
     logo: <ListTree className="h-4 w-4" />,
   },
   {
@@ -54,33 +54,35 @@ export default function DashboardHeader() {
   const location = useLocation();
 
   return (
-    <section className="w-full relative  ">
-      <div className="flex w-full justify-between xl:justify-end xl:border-b py-6 items-center">
+    <section className="relative w-full">
+      <div className="flex w-full items-center justify-between py-3 xl:justify-end xl:border-b">
         <Sheet
           open={isSheetOpen}
-          onOpenChange={(isOpen) => isSetSheetOpen(isOpen)}>
+          onOpenChange={(isOpen) => isSetSheetOpen(isOpen)}
+        >
           <SheetTrigger asChild>
-            <AlignLeft className="h-7 w-7 cursor-pointer xl:hidden  " />
+            <AlignLeft className="h-6 w-6 cursor-pointer xl:hidden" />
           </SheetTrigger>
-          <SheetContent side="left" className="flex flex-col !w-72  p-0 ">
-            <nav className=" text-lg font-medium  ">
+          <SheetContent side="left" className="flex !w-72 flex-col p-0">
+            <nav className="text-lg font-medium">
               <Link to="/">
-                <img src="/logo.png" className="h-20  " alt="Shopme-logo" />
+                <img src="/logo.png" className="h-20" alt="Shopme-logo" />
               </Link>
-              <div className="flex flex-col w-full   px-2.5">
+              <div className="flex w-full flex-col px-2.5">
                 <Link
                   to="/dashboard-page"
                   onClick={() => isSetSheetOpen(false)}
                   className={cn(
-                    "flex items-center w-full  text-sm gap-3 rounded-lg mb-4  transition-all p-4   ",
+                    "mb-4 flex w-full items-center gap-3 rounded-lg p-4 text-sm transition-all",
                     location.pathname === "/dashboard-page"
-                      ? " bg-primary/20  "
-                      : "hover:bg-accent"
-                  )}>
+                      ? "bg-primary/20"
+                      : "hover:bg-accent",
+                  )}
+                >
                   <House className="h-4 w-4" />
                   Dashboard
                 </Link>
-                <p className="text-sm text-secondary/70 p-4">
+                <p className="p-4 text-sm text-secondary/70">
                   Store Managements{" "}
                 </p>
                 {dashboardLinks.map((item, index) => (
@@ -89,11 +91,12 @@ export default function DashboardHeader() {
                     to={item.to}
                     onClick={() => isSetSheetOpen(false)}
                     className={cn(
-                      "flex items-center w-full  text-sm gap-3 rounded-lg  transition-all p-4   ",
+                      "flex w-full items-center gap-3 rounded-lg p-4 text-sm transition-all",
                       location.pathname === item.to
-                        ? " bg-primary/20  "
-                        : "hover:bg-accent"
-                    )}>
+                        ? "bg-primary/20"
+                        : "hover:bg-accent",
+                    )}
+                  >
                     {item.logo}
                     {item.name}
                   </Link>
@@ -116,14 +119,15 @@ export default function DashboardHeader() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="mt-2">
-              <Link className="flex items-center w-full  gap-2" to="/">
+              <Link className="flex w-full items-center gap-2" to="/">
                 Home
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem className="mb-3">
               <Link
-                className="flex items-center w-full  gap-2"
-                to="/profile-page">
+                className="flex w-full items-center gap-2"
+                to="/profile-page"
+              >
                 Profile
               </Link>
             </DropdownMenuItem>
@@ -132,16 +136,13 @@ export default function DashboardHeader() {
               <Link
                 to="/login"
                 // onClick={handleLogout}
-                className="flex w-full text-primary items-center gap-1.5  py-1">
+                className="flex w-full items-center gap-1.5 py-1 text-primary"
+              >
                 <LogOut /> Logout
               </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      </div>
-
-      <div className="hidden xl:block">
-        <Outlet />
       </div>
     </section>
   );

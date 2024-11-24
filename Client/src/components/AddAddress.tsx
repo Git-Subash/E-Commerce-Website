@@ -40,7 +40,7 @@ export default function AddAddress() {
   async function handleSubmit(
     data: z.infer<typeof addressSchema>,
     form: UseFormReturn<z.infer<typeof addressSchema>>,
-    closeDialog: () => void
+    closeDialog: () => void,
   ) {
     try {
       const response = await Axios({
@@ -80,7 +80,8 @@ export default function AddAddress() {
       button={
         <Button
           size="sm"
-          className="tracking-wider rounded-md bg-primary text-white font-bold transition duration-200 hover:bg-white hover:text-black border-2 border-transparent hover:border-primary">
+          className="rounded-md border-2 border-transparent bg-primary font-bold tracking-wider text-white transition duration-200 hover:border-primary hover:bg-white hover:text-black"
+        >
           <Plus /> Add
         </Button>
       }

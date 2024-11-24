@@ -43,10 +43,10 @@ export async function createSubCategoryController(req, res) {
 
 export async function getSubCategoryController(req, res) {
   try {
-    const data = await subCategoryModel.findById().sort({ createdAt: -1 });
+    const data = await subCategoryModel.find().sort({ createdAt: -1 });
 
     return res.json({
-      message: "categort details",
+      message: " sub-categort details",
       data: data,
       error: false,
       success: true,
@@ -56,6 +56,34 @@ export async function getSubCategoryController(req, res) {
       message: error.message || error,
       success: false,
       error: true,
+    });
+  }
+}
+
+export async function getFilterSubCategory(req, res) {
+  try {
+    const { search, category } = req.query;
+
+    //create a filter
+    const filter = {};
+    if (search) {
+      filter.name = { $regex: search, $options: "i" };
+    }
+    if (category) {
+      filter.categoryId = category;
+    }
+
+    const subCategory = await subCategoryModel.find(filter);
+
+    return res.status(200).json({
+      error: false,
+      success: true,
+      data: subCategory,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to fetch products",
+      success: false,
     });
   }
 }

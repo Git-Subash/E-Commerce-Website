@@ -23,19 +23,20 @@ const links = [
 export default function Side() {
   const location = useLocation();
   return (
-    <aside className=" hidden  w-full  md:flex  max-h-screen flex-col gap-2">
-      <div className="flex-1 my-10">
+    <aside className="hidden max-h-screen w-full flex-col gap-2 md:flex">
+      <div className="my-10 flex-1">
         <nav className="group grid items-start gap-2 px-2 text-sm font-medium lg:px-4">
           {links.map((item, index) => (
             <Link
               key={index}
               to={item.to}
               className={cn(
-                "flex items-center  gap-3 rounded-lg  transition-all p-2  mx-2 ",
+                "mx-2 flex items-center gap-3 rounded-lg p-2 transition-all",
                 location.pathname === item.to
-                  ? " bg-primary/20  "
-                  : "hover:bg-accent"
-              )}>
+                  ? "bg-primary/20"
+                  : "hover:bg-accent",
+              )}
+            >
               {item.logo}
               {item.name}
             </Link>

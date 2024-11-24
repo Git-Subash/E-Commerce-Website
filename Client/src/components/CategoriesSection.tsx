@@ -23,7 +23,7 @@ const list = [
 
 export default function CategoriesSection() {
   const plugin = React.useRef(
-    Autoplay({ delay: 2000, stopOnInteraction: true })
+    Autoplay({ delay: 2000, stopOnInteraction: true }),
   );
   const [api, setApi] = React.useState<CarouselApi>();
 
@@ -41,17 +41,17 @@ export default function CategoriesSection() {
   };
 
   return (
-    <MaxWidthWrapper className="my-10 flex  flex-col gap-4">
-      <div className="flex    items-center justify-between w-full">
+    <MaxWidthWrapper className="my-10 flex flex-col gap-4">
+      <div className="flex w-full items-center justify-between">
         <h1 className="text-3xl font-bold">Featured Categories</h1>
-        <div className="flex gap-3  md:mt-2 ">
+        <div className="flex gap-3 md:mt-2">
           <ArrowLeft
             onClick={handleLeftClick}
-            className="bg-primary/20 w-10 p-2 rounded-full h-10"
+            className="h-10 w-10 rounded-full bg-primary/20 p-2"
           />
           <ArrowRight
             onClick={handleRightClick}
-            className="bg-primary/20 w-10 p-2 rounded-full h-10"
+            className="h-10 w-10 rounded-full bg-primary/20 p-2"
           />
         </div>
       </div>
@@ -61,15 +61,17 @@ export default function CategoriesSection() {
         plugins={[plugin.current]}
         className="w-full"
         onMouseEnter={plugin.current.stop}
-        onMouseLeave={plugin.current.reset}>
+        onMouseLeave={plugin.current.reset}
+      >
         <CarouselContent>
           {list.map((_item, index) => (
             <CarouselItem
               key={index}
-              className="basis-1/2  sm:basis-1/3 lg:basis-1/4 xl:basis-1/5">
-              <Link to={_item.to} className="  ">
-                <Card className="p-4  mt-6 flex flex-col items-center justify-center gap-6">
-                  <img src={_item.image} className="w-32 h-32 mx-auto" />
+              className="basis-1/2 sm:basis-1/3 lg:basis-1/4 xl:basis-1/5"
+            >
+              <Link to={_item.to} className=" ">
+                <Card className="mt-6 flex flex-col items-center justify-center gap-6 p-4">
+                  <img src={_item.image} className="mx-auto h-32 w-32" />
                   <p>{_item.name}</p>
                 </Card>
               </Link>

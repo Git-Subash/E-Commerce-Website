@@ -69,28 +69,29 @@ export default function ResetPassword() {
     }
   }
   return (
-    <div className="my-10 flex items-center justify-center w-full dark:bg-gray-950">
-      <div className="bg-white flex flex-col gap-10 dark:bg-gray-900 shadow-2xl rounded-lg px-8  max-w-xl">
-        <h1 className="text-3xl mt-10 font-bold text-center mb-4 dark:text-gray-200">
+    <div className="my-10 flex w-full items-center justify-center dark:bg-gray-950">
+      <div className="flex max-w-xl flex-col gap-10 rounded-lg bg-white px-8 shadow-2xl dark:bg-gray-900">
+        <h1 className="mb-4 mt-10 text-center text-3xl font-bold dark:text-gray-200">
           Enter New Password
         </h1>
 
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="pb-24 w-[350px] sm:w-[500px] ">
+            className="w-[350px] pb-24 sm:w-[500px]"
+          >
             <div className="mb-4">
               <FormField
                 control={form.control}
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="block  text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 ">
+                    <FormLabel className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Password
                     </FormLabel>
                     <FormControl>
                       <Input
-                        className="shadow-sm rounded-md w-full px-4 py-6 border border-gray-300 focus:outline-none focus:border-none focus:ring-indigo-500 focus:border-indigo-500"
+                        className="w-full rounded-md border border-gray-300 px-4 py-6 shadow-sm focus:border-none focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                         placeholder="Enter your password"
                         {...field}
                       />
@@ -107,12 +108,12 @@ export default function ResetPassword() {
                 name="confirmPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="block  text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 ">
+                    <FormLabel className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Confirm Password
                     </FormLabel>
                     <FormControl>
                       <Input
-                        className="shadow-sm rounded-md w-full px-4 py-6 border border-gray-300 focus:outline-none focus:border-none focus:ring-indigo-500 focus:border-indigo-500"
+                        className="w-full rounded-md border border-gray-300 px-4 py-6 shadow-sm focus:border-none focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                         placeholder="Enter Confirm Password"
                         {...field}
                       />
@@ -126,7 +127,8 @@ export default function ResetPassword() {
             <Button
               type="submit"
               disabled={form.formState.isSubmitting}
-              className="px-8 py-6 w-full rounded-md bg-teal-500 text-white font-bold transition duration-200 hover:bg-white hover:text-black border-2 border-transparent hover:border-teal-500">
+              className="w-full rounded-md border-2 border-transparent bg-teal-500 px-8 py-6 font-bold text-white transition duration-200 hover:border-teal-500 hover:bg-white hover:text-black"
+            >
               Register
               {form.formState.isSubmitting && (
                 <Loader className="ml-2 h-6 w-6 animate-spin" />

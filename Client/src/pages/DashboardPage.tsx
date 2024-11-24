@@ -1,11 +1,4 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import GenericTable from "@/components/GenericTable";
 import { cn } from "@/lib/utils";
 import { DollarSign, Plus, ShoppingCartIcon, UsersIcon } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -21,95 +14,104 @@ import { ScrollArea, ScrollBar } from "../components/ui/scroll-area";
 const invoices = [
   {
     invoice: "INV001",
-    paymentStatus: "Paid",
-    totalAmount: "$250.00",
-    productName: "Milk",
+    status: "Paid",
+    price: "$250.00",
+    product: "Milk",
   },
   {
     invoice: "INV002",
-    paymentStatus: "Pending",
-    totalAmount: "$150.00",
-    productName: "PayPal",
+    status: "Pending",
+    price: "$150.00",
+    product: "PayPal",
   },
   {
     invoice: "INV003",
-    paymentStatus: "Unpaid",
-    totalAmount: "$350.00",
-    productName: "Bank Transfer",
+    status: "Unpaid",
+    price: "$350.00",
+    product: "Bank Transfer",
   },
   {
     invoice: "INV004",
-    paymentStatus: "Paid",
-    totalAmount: "$450.00",
-    productName: "Credit Card",
+    status: "Paid",
+    price: "$450.00",
+    product: "Credit Card",
   },
 ];
 
-const list = [
+const columns = [
+  { header: "Invoice", key: "invoice" },
   {
-    to: "/dashboard-page/products",
-    image: "/dash-image.jpg",
-
-    title: "Welcome To Shopme Dashboard!",
-    discription: "Shopme is simple & clean design for developer and designer",
+    header: "Status",
+    key: "status",
+    render: (value: string) => (
+      <Badge
+        className={`rounded-sm p-1 ${
+          value === "Active" ? "bg-green-200" : "bg-gray-300"
+        }`}
+      >
+        {value}
+      </Badge>
+    ),
   },
+  { header: "Price", key: "price" },
+  { header: "Product", key: "product" },
 ];
 
-const list2 = [
+const cards = [
   {
     title: "Earnings",
     number: "$93,438.78",
     discription: "Monthly revenue",
-    icon: <DollarSign className="bg-primary/20 w-10 p-2 rounded-full h-10" />,
+    icon: <DollarSign className="h-10 w-10 rounded-full bg-primary/20 p-2" />,
   },
   {
     title: "Orders",
     number: "93,438",
     discription: "32+New Sales",
     icon: (
-      <ShoppingCartIcon className="bg-orange-500/20 w-10 p-2 rounded-full h-10" />
+      <ShoppingCartIcon className="h-10 w-10 rounded-full bg-orange-500/20 p-2" />
     ),
   },
   {
     title: "Customer",
     number: "53,438",
     discription: "30+new in 2 days",
-    icon: <UsersIcon className="bg-sky-500/20 w-10 p-2 rounded-full h-10" />,
+    icon: <UsersIcon className="h-10 w-10 rounded-full bg-sky-500/20 p-2" />,
   },
 ];
 export default function DashboardPage() {
   return (
-    <section className="mt-10 px-5  ">
-      {list.map((_item, _index) => (
-        <div
-          key={_index}
-          className=" h-[25vh] relative  sm:h-[30vh]  rounded-lg bg-cover bg-center bg-no-repeat "
-          style={{ backgroundImage: `url(${_item.image})` }}>
-          <div className="w-full px-5 md:px-14  flex flex-col justify-center gap-y-3 sm:gap-y-6 h-full">
-            <h1 className="text-2xl sm:text-4xl font-semibold max-w-2xl">
-              {_item.title}
-            </h1>
-            <p className="text-sm text-secondary/60 font-medium max-w-xs md:max-w-md sm:text-lg">
-              {_item.discription}{" "}
-            </p>
-            <Link
-              className={cn(
-                "flex  group gap-2 items-center mr-auto  transition-all duration-300 ",
-                buttonVariants({ variant: "default" })
-              )}
-              to={_item.to}>
-              Create Product
-              <Plus className="group-hover:rotate-180 transition-all duration-300" />
-            </Link>
-          </div>
+    <section className="mt-10 px-5">
+      <div
+        className="relative h-[25vh] rounded-lg bg-cover bg-center bg-no-repeat sm:h-[30vh]"
+        style={{ backgroundImage: "url(/dash-image.jpg)" }}
+      >
+        <div className="flex h-full w-full flex-col justify-center gap-y-3 px-5 sm:gap-y-6 md:px-14">
+          <h1 className="max-w-2xl text-2xl font-semibold sm:text-4xl">
+            Welcome To Shopme Dashboard!
+          </h1>
+          <p className="max-w-xs text-sm font-medium text-secondary/60 sm:text-lg md:max-w-md">
+            Shopme is simple & clean design for developer and designer
+          </p>
+          <Link
+            className={cn(
+              "group mr-auto flex items-center gap-2 transition-all duration-300",
+              buttonVariants({ variant: "default" }),
+            )}
+            to="/dashboard-page/products"
+          >
+            Create Product
+            <Plus className="transition-all duration-300 group-hover:rotate-180" />
+          </Link>
         </div>
-      ))}
-      <ScrollArea className=" max-w-md  min-w-full xl:max-w-7xl lg:max-w-4xl md:max-w-2xl sm:max-w-xl  whitespace-nowrap ">
+      </div>
+
+      <ScrollArea className="min-w-full max-w-sm whitespace-nowrap sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-2xl">
         <div className="flex w-max space-x-4 p-4">
-          {list2.map((_item, _index) => (
-            <Card className="mt-5  min-w-[400px] border-none  rounded-lg shadow-md">
-              <CardContent className="p-6 flex flex-col gap-10">
-                <CardTitle className="flex  justify-between items-center">
+          {cards.map((_item, _index) => (
+            <Card className="mt-5 min-w-[400px] rounded-lg border-none shadow-md">
+              <CardContent className="flex flex-col gap-10 p-6">
+                <CardTitle className="flex items-center justify-between">
                   {_item.title}
                   {_item.icon}
                 </CardTitle>
@@ -126,38 +128,10 @@ export default function DashboardPage() {
 
       <Card className="my-10">
         <CardHeader>
-          <CardTitle> Recent Orders </CardTitle>
+          <CardTitle className="text-secondary/70">Recent Order</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-secondary/10 hover:bg-secondary/0  w-full">
-                <TableHead className="w-[100px]">Invoice</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Product</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {invoices.map((invoice) => (
-                <TableRow key={invoice.invoice}>
-                  <TableCell className="font-medium">
-                    {invoice.invoice}
-                  </TableCell>
-                  <TableCell>
-                    <Badge className="bg-secondary  cursor-pointer">
-                      {invoice.paymentStatus}{" "}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>{invoice.productName}</TableCell>
-                  <TableCell className="text-right">
-                    {invoice.totalAmount}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-            {/*  */}
-          </Table>
+          <GenericTable columns={columns} data={invoices} />
         </CardContent>
       </Card>
     </section>

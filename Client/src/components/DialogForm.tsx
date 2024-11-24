@@ -40,7 +40,7 @@ type DialogFormProps<T extends ZodType<any>> = {
   onSubmit: (
     data: z.infer<T>,
     form: UseFormReturn<z.infer<T>>,
-    closeDialog: () => void // Add the closeDialog argument here
+    closeDialog: () => void, // Add the closeDialog argument here
   ) => Promise<void>;
   dialogClassName?: string;
   buttonProps?: ButtonProps;
@@ -74,11 +74,13 @@ export default function DialogForm<T extends ZodType<any>>({
       onOpenChange={(isOpen) => {
         setIsDialogOpen(isOpen);
         form.reset();
-      }}>
+      }}
+    >
       <DialogTrigger asChild>{button}</DialogTrigger>
       <DialogContent
         onClick={(e) => e.stopPropagation()}
-        className={`max-w-lg rounded-md ${dialogClassName}`}>
+        className={`max-w-lg rounded-md ${dialogClassName}`}
+      >
         <DialogHeader>
           <DialogTitle className="flex justify-start">{title}</DialogTitle>
           <DialogDescription className="flex justify-start">
@@ -88,9 +90,10 @@ export default function DialogForm<T extends ZodType<any>>({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit((data) =>
-              onSubmit(data, form, handleClose)
+              onSubmit(data, form, handleClose),
             )}
-            className="space-y-6">
+            className="space-y-6"
+          >
             {fields.map((field) => (
               <FormField
                 key={field.name}
@@ -101,7 +104,7 @@ export default function DialogForm<T extends ZodType<any>>({
                     <FormLabel>{field.label}</FormLabel>
                     <FormControl>
                       <Input
-                        className="text-sm no-arrows"
+                        className="no-arrows text-sm"
                         placeholder={field.placeholder || ""}
                         type={field.type || "text"}
                         {...field.inputProps}
@@ -117,8 +120,9 @@ export default function DialogForm<T extends ZodType<any>>({
             <Button
               disabled={form.formState.isSubmitting}
               type="submit"
-              className="w-full  tracking-wide"
-              {...buttonProps}>
+              className="w-full tracking-wide"
+              {...buttonProps}
+            >
               Save
               {form.formState.isSubmitting && (
                 <Loader className="ml-2 h-4 w-4 animate-spin" />

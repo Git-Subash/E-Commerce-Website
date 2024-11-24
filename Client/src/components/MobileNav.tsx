@@ -23,10 +23,14 @@ import { useDispatch, useSelector } from "react-redux";
 export default function MobileNav({ button }: { button: ReactNode }) {
   const [isSheetOpen, setIsSheetOpen] = React.useState<boolean>(false);
   const user = useSelector((state: RootState) => state.user);
+  const categoryList = useSelector(
+    (state: RootState) => state.product.categoryList,
+  );
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const isLoggedIn = user._id;
+  const isAdmin = user.role === "ADMIN";
 
   const handleLogout = async () => {
     try {
@@ -50,81 +54,31 @@ export default function MobileNav({ button }: { button: ReactNode }) {
       <SheetTrigger>{button}</SheetTrigger>
       <SheetContent className="!w-full pt-0">
         <Link to="/">
-          <img src="/logo.png" className="h-20  " alt="Shopme-logo" />
+          <img src="/logo.png" className="h-20" alt="Shopme-logo" />
         </Link>
         <Separator />
-        <h1 className="w-full px-1 tracking-wide text-2xl font-semibold my-4">
+        <h1 className="my-4 w-full px-1 text-2xl font-semibold tracking-wide">
           Hello! {user.name}
         </h1>
         <Accordion type="single" collapsible>
           <AccordionItem className="!border-none" value="item-1 ">
             <AccordionTrigger className="hover:no-underline">
-              <Button className="w-full ">All categories</Button>
+              <Button className="w-full">All categories</Button>
             </AccordionTrigger>
-            <AccordionContent className=" flex flex-col border rounded-md">
-              <Link
-                to="#"
-                onClick={() => setIsSheetOpen(false)}
-                className={cn(
-                  "!justify-start",
-                  buttonVariants({ variant: "ghost" })
-                )}>
-                Dairy, Bread & Eggs
-              </Link>
-              <Link
-                to="#"
-                onClick={() => setIsSheetOpen(false)}
-                className={cn(
-                  "!justify-start",
-                  buttonVariants({ variant: "ghost" })
-                )}>
-                Snacks & Munchies
-              </Link>
-              <Link
-                to="#"
-                onClick={() => setIsSheetOpen(false)}
-                className={cn(
-                  "!justify-start",
-                  buttonVariants({ variant: "ghost" })
-                )}>
-                Fruits & Vegetables{" "}
-              </Link>
-              <Link
-                to="#"
-                onClick={() => setIsSheetOpen(false)}
-                className={cn(
-                  "!justify-start",
-                  buttonVariants({ variant: "ghost" })
-                )}>
-                Cold Drinks & Juices
-              </Link>
-              <Link
-                to="#"
-                onClick={() => setIsSheetOpen(false)}
-                className={cn(
-                  "!justify-start",
-                  buttonVariants({ variant: "ghost" })
-                )}>
-                Breakfast & Instant Food{" "}
-              </Link>
-              <Link
-                to="#"
-                onClick={() => setIsSheetOpen(false)}
-                className={cn(
-                  "!justify-start",
-                  buttonVariants({ variant: "ghost" })
-                )}>
-                Bakery & Biscuits
-              </Link>
-              <Link
-                to="#"
-                onClick={() => setIsSheetOpen(false)}
-                className={cn(
-                  "!justify-start",
-                  buttonVariants({ variant: "ghost" })
-                )}>
-                Chicken, Meat & Fish
-              </Link>
+            <AccordionContent className="flex flex-col rounded-md border">
+              {categoryList.map((_item, _index) => (
+                <Link
+                  key={_index}
+                  to="#"
+                  onClick={() => setIsSheetOpen(false)}
+                  className={cn(
+                    "!justify-start",
+                    buttonVariants({ variant: "ghost" }),
+                  )}
+                >
+                  {_item.name}
+                </Link>
+              ))}
             </AccordionContent>
           </AccordionItem>
         </Accordion>
@@ -134,20 +88,35 @@ export default function MobileNav({ button }: { button: ReactNode }) {
               to="/profile-page"
               onClick={() => setIsSheetOpen(false)}
               className={cn(
-                "!justify-start w-full",
-                buttonVariants({ variant: "ghost" })
-              )}>
+                "w-full !justify-start",
+                buttonVariants({ variant: "ghost" }),
+              )}
+            >
               Profile
             </Link>
+            {isAdmin && (
+              <Link
+                onClick={() => setIsSheetOpen(false)}
+                className={cn(
+                  "w-full !justify-start",
+                  buttonVariants({ variant: "ghost" }),
+                )}
+                to="/dashboard-page"
+              >
+                Dashboard
+              </Link>
+            )}
             <Link
               onClick={() => setIsSheetOpen(false)}
               className={cn(
-                "!justify-start w-full",
-                buttonVariants({ variant: "ghost" })
+                "w-full !justify-start",
+                buttonVariants({ variant: "ghost" }),
               )}
-              to="/cart">
+              to="/cart"
+            >
               Cart
             </Link>
+
             <Link
               onClick={() => {
                 setIsSheetOpen(false);
@@ -155,9 +124,10 @@ export default function MobileNav({ button }: { button: ReactNode }) {
               }}
               to="/login"
               className={cn(
-                "!justify-start w-full",
-                buttonVariants({ variant: "ghost" })
-              )}>
+                "w-full !justify-start",
+                buttonVariants({ variant: "ghost" }),
+              )}
+            >
               Logout
             </Link>
           </>
@@ -167,9 +137,10 @@ export default function MobileNav({ button }: { button: ReactNode }) {
               to="/login"
               onClick={() => setIsSheetOpen(false)}
               className={cn(
-                "!justify-start w-full",
-                buttonVariants({ variant: "ghost" })
-              )}>
+                "w-full !justify-start",
+                buttonVariants({ variant: "ghost" }),
+              )}
+            >
               Login
             </Link>
 
@@ -177,18 +148,20 @@ export default function MobileNav({ button }: { button: ReactNode }) {
               to="/register"
               onClick={() => setIsSheetOpen(false)}
               className={cn(
-                "!justify-start w-full",
-                buttonVariants({ variant: "ghost" })
-              )}>
+                "w-full !justify-start",
+                buttonVariants({ variant: "ghost" }),
+              )}
+            >
               Register
             </Link>
             <Link
               to="/forgot-password"
               onClick={() => setIsSheetOpen(false)}
               className={cn(
-                "!justify-start w-full",
-                buttonVariants({ variant: "ghost" })
-              )}>
+                "w-full !justify-start",
+                buttonVariants({ variant: "ghost" }),
+              )}
+            >
               Forgot your password
             </Link>
           </>

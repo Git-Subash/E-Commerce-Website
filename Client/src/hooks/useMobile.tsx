@@ -2,7 +2,7 @@ import React from "react";
 
 const useMobile = (breakpoint = 768) => {
   const [isMobile, setIsMobile] = React.useState(
-    window.innerWidth < breakpoint
+    window.innerWidth < breakpoint,
   );
 
   const handleResize = () => {

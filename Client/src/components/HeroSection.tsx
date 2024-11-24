@@ -34,7 +34,7 @@ const list = [
 
 export default function HeroSection() {
   const plugin = React.useRef(
-    Autoplay({ delay: 2000, stopOnInteraction: true })
+    Autoplay({ delay: 2000, stopOnInteraction: true }),
   );
   const [api, setApi] = React.useState<CarouselApi>();
   const [current, setCurrent] = React.useState(0);
@@ -61,44 +61,48 @@ export default function HeroSection() {
       <Carousel
         setApi={setApi}
         plugins={[plugin.current]}
-        className="w-full "
+        className="w-full"
         onMouseEnter={plugin.current.stop}
-        onMouseLeave={plugin.current.reset}>
+        onMouseLeave={plugin.current.reset}
+      >
         <CarouselContent>
           {list.map((_item, index) => (
             <CarouselItem key={index}>
               <div
-                className=" h-[40vh] relative  sm:h-[60vh] mt-14 rounded-md bg-cover bg-center bg-no-repeat "
-                style={{ backgroundImage: `url(${_item.image})` }}>
-                <div className="w-full px-5 md:px-14  flex flex-col justify-center gap-y-4 sm:gap-y-8 h-full">
+                className="relative mt-14 h-[40vh] rounded-md bg-cover bg-center bg-no-repeat sm:h-[60vh]"
+                style={{ backgroundImage: `url(${_item.image})` }}
+              >
+                <div className="flex h-full w-full flex-col justify-center gap-y-4 px-5 sm:gap-y-8 md:px-14">
                   <Badge
-                    className=" bg-amber-600  mr-auto pb-1.5 px-2 "
-                    variant="outline">
+                    className="mr-auto bg-amber-600 px-2 pb-1.5"
+                    variant="outline"
+                  >
                     {_item.tag}
                   </Badge>
-                  <h1 className="text-2xl sm:text-5xl font-bold max-w-2xl">
+                  <h1 className="max-w-2xl text-2xl font-bold sm:text-5xl">
                     {_item.title}{" "}
                   </h1>
-                  <p className="text-sm text-secondary/60 max-w-md sm:text-lg">
+                  <p className="max-w-md text-sm text-secondary/60 sm:text-lg">
                     {_item.discription}{" "}
                   </p>
                   <Link
                     className={cn(
-                      "flex  group gap-2 items-center mr-auto  transition-all duration-300 ",
-                      buttonVariants({ variant: "secondary" })
+                      "group mr-auto flex items-center gap-2 transition-all duration-300",
+                      buttonVariants({ variant: "secondary" }),
                     )}
-                    to={_item.to}>
+                    to={_item.to}
+                  >
                     Show Now{" "}
-                    <MoveRight className="group-hover:translate-x-2 transition-all duration-300" />
+                    <MoveRight className="transition-all duration-300 group-hover:translate-x-2" />
                   </Link>
                 </div>
-                <div className="flex z-30 absolute bottom-0 w-full justify-center ">
+                <div className="absolute bottom-0 z-30 flex w-full justify-center">
                   {Array.from({ length: count }).map((_, index) => (
                     <Dot
                       key={index}
                       className={cn(
-                        "cursor-pointer h-12  w-12  transition-colors",
-                        current == index ? "text-primary" : "text-gray-400"
+                        "h-12 w-12 cursor-pointer transition-colors",
+                        current == index ? "text-primary" : "text-gray-400",
                       )}
                       onClick={() => handleDotClick(index)}
                     />

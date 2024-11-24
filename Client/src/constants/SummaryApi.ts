@@ -30,11 +30,11 @@ export const SummaryApi = {
     method: "put",
   },
   refreshToken: {
-    url: "api/user/refresh-token",
+    url: "/api/user/refresh-token",
     method: "post",
   },
   upload_avatar: {
-    url: "api/user/upload-avatar",
+    url: "/api/user/upload-avatar",
     method: "put",
   },
   userDetails: {
@@ -46,23 +46,47 @@ export const SummaryApi = {
     method: "put",
   },
   add_address: {
-    url: "api/address/create",
+    url: "/api/address/create",
     method: "post",
   },
   get_address: {
-    url: "api/address/get",
+    url: "/api/address/get",
     method: "get",
   },
   update_address: {
-    url: "api/address/update",
+    url: "/api/address/update",
     method: "put",
   },
   update_address_status: {
-    url: "api/address/update-stauts",
+    url: "/api/address/update-stauts",
     method: "put",
   },
   delete_address: {
-    url: "api/address/delete",
+    url: "/api/address/delete",
     method: "delete",
+  },
+  add_Category: {
+    url: "/api/category/create",
+    method: "post",
+  },
+  add_SubCategory: {
+    url: "/api/sub-category/create",
+    method: "post",
+  },
+  get_Category: {
+    url: "/api/category/get",
+    method: "get",
+  },
+  filter_Category: {
+    url: "/api/category/filter",
+    method: "get",
+  },
+  get_SubCategory: {
+    url: "/api/sub-category/get",
+    method: "get",
+  },
+  filter_SubCategory: {
+    url: "/api/sub-category/filter",
+    method: "get",
   },
 };

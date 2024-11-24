@@ -1,25 +1,26 @@
 import App from "@/App";
+import AddSubCategory from "@/components/AddSubCategory";
+import Dashboard from "@/layouts/Dashboard";
+import Profile from "@/layouts/Profile";
 import AddressPage from "@/pages/AddressPage";
 import CartPage from "@/pages/CartPage";
+import Category from "@/pages/Category";
+import Customers from "@/pages/Customers";
+import DashboardPage from "@/pages/DashboardPage";
 import ForgotPassword from "@/pages/ForgotPassword";
 import Home from "@/pages/Home";
 import Login from "@/pages/Login";
 import OrderDetailsPage from "@/pages/OrderDetailsPage";
+import Orders from "@/pages/Orders";
 import OtpVerification from "@/pages/OtpVerification";
+import Products from "@/pages/Products";
+import ProfilePage from "@/pages/ProfilePage";
 import Register from "@/pages/Register";
 import ResetPassword from "@/pages/ResetPassword";
 import SearchPage from "@/pages/SearchPage";
+import SubCategory from "@/pages/SubCategory";
 import VerfiyEmail from "@/pages/VerfiyEmail";
 import { createBrowserRouter } from "react-router-dom";
-import Profile from "@/layouts/Profile";
-import ProfilePage from "@/pages/ProfilePage";
-import Dashboard from "@/layouts/Dashboard";
-import DashboardPage from "@/pages/DashboardPage";
-import Products from "@/pages/Products";
-import Category from "@/pages/Category";
-import SubCategory from "@/pages/SubCategory";
-import Orders from "@/pages/Orders";
-import Customers from "@/pages/Customers";
 
 const router = createBrowserRouter(
   [
@@ -51,9 +52,22 @@ const router = createBrowserRouter(
       element: <Dashboard />,
       children: [
         { path: "", element: <DashboardPage /> },
-        { path: "products", element: <Products /> },
-        { path: "categoties", element: <Category /> },
-        { path: "sub-categoties", element: <SubCategory /> },
+        {
+          path: "products",
+          element: <Products />,
+          children: [{ path: "add-product", element: <Products /> }],
+        },
+
+        {
+          path: "category",
+          element: <Category />,
+          children: [{ path: "add-category", element: <Category /> }],
+        },
+        {
+          path: "sub-category",
+          element: <SubCategory />,
+          children: [{ path: "add-sub-category", element: <AddSubCategory /> }],
+        },
         { path: "orders", element: <Orders /> },
         { path: "customers", element: <Customers /> },
       ],
@@ -67,7 +81,7 @@ const router = createBrowserRouter(
     future: {
       v7_relativeSplatPath: true,
     },
-  }
+  },
 );
 
 export default router;

@@ -12,7 +12,7 @@ type GlobleContextType = {
 
 // Creating the context
 export const GlobleContext = React.createContext<GlobleContextType | null>(
-  null
+  null,
 );
 
 // Custom hook to use the context

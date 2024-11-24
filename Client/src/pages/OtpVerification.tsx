@@ -80,45 +80,46 @@ export default function OtpVerification() {
   }
 
   return (
-    <div className="py-10 flex items-center justify-center w-full dark:bg-gray-950">
-      <div className="bg-white flex flex-col gap-10 dark:bg-gray-900 shadow-[rgba(0,_0,_0,_0.4)_0px_30px_90px] rounded-xl px-8  max-w-xl">
+    <div className="flex w-full items-center justify-center py-10 dark:bg-gray-950">
+      <div className="flex max-w-xl flex-col gap-10 rounded-xl bg-white px-8 shadow-[rgba(0,_0,_0,_0.4)_0px_30px_90px] dark:bg-gray-900">
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="pb-24 w-[350px] sm:w-[500px]">
+            className="w-[350px] pb-24 sm:w-[500px]"
+          >
             <FormField
               control={form.control}
               name="pin"
               render={({ field }) => (
-                <FormItem className=" flex flex-col items-center gap-2 sm:gap-4">
-                  <FormLabel className="block mt-10 text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <FormItem className="flex flex-col items-center gap-2 sm:gap-4">
+                  <FormLabel className="mb-2 mt-10 block text-sm font-medium text-gray-700 dark:text-gray-300">
                     One-Time Password
                   </FormLabel>
                   <FormControl>
                     <InputOTP maxLength={6} {...field}>
-                      <InputOTPGroup className="sm:gap-4 gap-2 ">
+                      <InputOTPGroup className="gap-2 sm:gap-4">
                         <InputOTPSlot
-                          className=" !rounded-none !h-12 !w-12  sm:!h-16 sm:!w-16"
+                          className="!h-12 !w-12 !rounded-none sm:!h-16 sm:!w-16"
                           index={0}
                         />
                         <InputOTPSlot
-                          className=" border !h-12 !w-12 sm:!h-16 sm:!w-16"
+                          className="!h-12 !w-12 border sm:!h-16 sm:!w-16"
                           index={1}
                         />
                         <InputOTPSlot
-                          className="border  !h-12 !w-12 sm:!h-16 sm:!w-16"
+                          className="!h-12 !w-12 border sm:!h-16 sm:!w-16"
                           index={2}
                         />
                         <InputOTPSlot
-                          className="border !h-12 !w-12 sm:!h-16 sm:!w-16"
+                          className="!h-12 !w-12 border sm:!h-16 sm:!w-16"
                           index={3}
                         />
                         <InputOTPSlot
-                          className="border !h-12 !w-12 sm:!h-16 sm:!w-16"
+                          className="!h-12 !w-12 border sm:!h-16 sm:!w-16"
                           index={4}
                         />
                         <InputOTPSlot
-                          className=" !rounded-none !h-12 !w-12 sm:!h-16 sm:!w-16"
+                          className="!h-12 !w-12 !rounded-none sm:!h-16 sm:!w-16"
                           index={5}
                         />
                       </InputOTPGroup>
@@ -135,7 +136,8 @@ export default function OtpVerification() {
             <Button
               type="submit"
               disabled={form.formState.isSubmitting}
-              className="px-8 mt-5 py-6 w-full rounded-md bg-primary text-white font-bold transition duration-200 hover:bg-white hover:text-black border-2 border-transparent hover:border-primary">
+              className="mt-5 w-full rounded-md border-2 border-transparent bg-primary px-8 py-6 font-bold text-white transition duration-200 hover:border-primary hover:bg-white hover:text-black"
+            >
               Verify
               {form.formState.isSubmitting && (
                 <Loader className="ml-2 h-6 w-6 animate-spin" />

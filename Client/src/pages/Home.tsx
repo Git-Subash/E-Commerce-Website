@@ -26,20 +26,22 @@ export default function Home() {
     <section className="">
       <HeroSection />
       <CategoriesSection />
-      <MaxWidthWrapper className="grid  my-10 gap-10 grid-cols-1 md:grid-cols-2">
+      <MaxWidthWrapper className="my-10 grid grid-cols-1 gap-10 md:grid-cols-2">
         {banners.map((_item, _index) => (
           <div
             key={_index}
-            className=" w-full px-5 md:px-10 rounded-lg flex flex-col justify-center gap-3 h-[30vh] bg-no-repeat bg-center"
-            style={{ backgroundImage: `url(${_item.image})` }}>
+            className="flex h-[30vh] w-full flex-col justify-center gap-3 rounded-lg bg-center bg-no-repeat px-5 md:px-10"
+            style={{ backgroundImage: `url(${_item.image})` }}
+          >
             <h1 className="text-4xl font-bold">{_item.title}</h1>
-            <p className="text-sm  text-secondary/60">{_item.offer}</p>
+            <p className="text-sm text-secondary/60">{_item.offer}</p>
             <Link
               to={_item.to}
               className={cn(
                 "mr-auto",
-                buttonVariants({ variant: "secondary" })
-              )}>
+                buttonVariants({ variant: "secondary" }),
+              )}
+            >
               Shop Now
             </Link>
           </div>

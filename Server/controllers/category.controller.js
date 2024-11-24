@@ -3,10 +3,10 @@ import cloudinaryImageUpload from "../utils/cloudinaryImageUpload.js";
 
 export async function createCategoryController(req, res) {
   try {
-    const { name } = req.body;
+    const { name, status } = req.body;
     const image = req.file;
 
-    if (!name) {
+    if (!name || !status) {
       return res.status(400).json({
         message: "Provide valid name",
         success: false,
@@ -25,6 +25,7 @@ export async function createCategoryController(req, res) {
 
     const createCategory = new categoryModel({
       name: name,
+      status: status,
       image: upload.url, //the image is in  upload :{url: imageUrl}
     });
 
@@ -47,7 +48,7 @@ export async function createCategoryController(req, res) {
 
 export async function getCategoryController(req, res) {
   try {
-    const data = await categoryModel.findById().sort({ createdAt: -1 });
+    const data = await categoryModel.find().sort({ createdAt: -1 });
 
     return res.json({
       message: "categort details",
@@ -60,6 +61,37 @@ export async function getCategoryController(req, res) {
       message: error.message || error,
       success: false,
       error: true,
+    });
+  }
+}
+
+export async function filterCategoryController(req, res) {
+  try {
+    const { search, status } = req.query;
+
+    //create a filter
+    const filter = {};
+
+    // Add search filter (case-insensitive regex)
+    if (search) {
+      filter.name = { $regex: search, $options: "i" };
+    }
+
+    // Add status filter (convert string to boolean)
+    if (status !== undefined && status !== "all") {
+      filter.status = status === "true";
+    }
+    const category = await categoryModel.find(filter);
+
+    return res.status(200).json({
+      error: false,
+      success: true,
+      data: category,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to fetch products",
+      success: false,
     });
   }
 }

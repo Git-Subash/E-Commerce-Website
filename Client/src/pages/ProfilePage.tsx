@@ -35,13 +35,13 @@ export default function ProfilePage() {
   const { toast } = useToast();
   const dispatch = useDispatch();
   const addressList = useSelector(
-    (state: RootState) => state.address.addressList
+    (state: RootState) => state.address.addressList,
   );
 
   async function handleSubmit(
     data: z.infer<typeof ProfileSchema>,
     form: UseFormReturn<z.infer<typeof ProfileSchema>>,
-    closeDialog: () => void
+    closeDialog: () => void,
   ) {
     try {
       const response = await Axios({
@@ -77,15 +77,16 @@ export default function ProfilePage() {
     }
   }
   return (
-    <section className=" relative px-2.5 md:px-4 w-full ">
-      <div className="flex pb-10 pt-10 md:pb-10 md:pt-0  justify-between items-center">
-        <h1 className="text-3xl px-4 font-semibold  ">My Profile</h1>
+    <section className="relative">
+      <div className="flex items-center justify-between pb-10 pt-10 md:pb-10 md:pt-0">
+        <h1 className="px-4 text-3xl font-semibold">My Profile</h1>
 
         <DialogForm
           button={
             <Button
               size="sm"
-              className="tracking-wider rounded-md bg-primary text-white font-bold transition duration-200 hover:bg-white hover:text-black border-2 border-transparent hover:border-primary">
+              className="rounded-md border-2 border-transparent bg-primary font-bold tracking-wider text-white transition duration-200 hover:border-primary hover:bg-white hover:text-black"
+            >
               <Pencil /> Edit
             </Button>
           }
@@ -122,71 +123,71 @@ export default function ProfilePage() {
         />
       </div>
       {/* Profile Card */}
-      <Card className="flex   shadow-none relative flex-row  border-none p-3  gap-4 items-center  mr-auto w-auto ">
-        <div className=" flex justify-center items-center">
+      <Card className="relative mr-auto flex w-auto flex-row items-center gap-4 border-none p-3 shadow-none">
+        <div className="flex items-center justify-center">
           <AddProfileImage />
         </div>
         <div className=" ">
-          <h3 className="font-medium text-md ">
-            <span className="font-semibold text-xl">{user?.name} </span>
+          <h3 className="text-md font-medium">
+            <span className="text-xl font-semibold">{user?.name} </span>
           </h3>
-          <h3 className="font-medium text-sm text-secondary/50 ">
+          <h3 className="text-sm font-medium text-secondary/50">
             {user?.status}
           </h3>
-          <h3 className="font-medium text-sm text-primary/50 ">
+          <h3 className="text-sm font-medium text-primary/50">
             Role : {user?.role}
           </h3>
         </div>
       </Card>
       {/* Personal Information */}
       <section className="py-6">
-        <h2 className="text-xl font-semibold mb-4 px-4">
+        <h2 className="mb-4 px-4 text-xl font-semibold">
           Personal Information
         </h2>
-        <Card className="p-4 shadow-none border-none">
+        <Card className="border-none p-4 shadow-none">
           <div className="mb-4">
-            <h3 className="text-secondary/50 font-semibold">Name</h3>
-            <p className="text-secondary/70 font-medium">{user?.name}</p>
+            <h3 className="font-semibold text-secondary/50">Name</h3>
+            <p className="font-medium text-secondary/70">{user?.name}</p>
           </div>
           <div className="mb-4">
-            <h3 className="text-secondary/50 font-semibold">Email</h3>
-            <p className="text-secondary/70 font-medium">{user?.email}</p>
+            <h3 className="font-semibold text-secondary/50">Email</h3>
+            <p className="font-medium text-secondary/70">{user?.email}</p>
           </div>
           <div>
-            <h3 className="text-secondary/50 font-semibold">Mobile</h3>
-            <p className="text-secondary/70 font-medium">{user?.mobile}</p>
+            <h3 className="font-semibold text-secondary/50">Mobile</h3>
+            <p className="font-medium text-secondary/70">{user?.mobile}</p>
           </div>
         </Card>
       </section>
       {/* Address Section */}
-      <section className="py-6 ">
-        <h2 className="text-xl font-semibold px-4 mb-4">Address</h2>
-        <Card className="p-4 shadow-none border-none">
+      <section className="py-6">
+        <h2 className="mb-4 px-4 text-xl font-semibold">Address</h2>
+        <Card className="border-none p-4 shadow-none">
           {addressList
             .filter((item) => item.status == true) // Show only active addresses
             .map((item, index) => (
-              <div key={index} className="grid md:grid-cols-2 gap-4 mb-4">
+              <div key={index} className="mb-4 grid gap-4 md:grid-cols-2">
                 <div>
-                  <h3 className="text-secondary/50 font-semibold">
+                  <h3 className="font-semibold text-secondary/50">
                     Address Line
                   </h3>
-                  <p className="text-secondary/70 font-medium">
+                  <p className="font-medium text-secondary/70">
                     {item.address_line}
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-secondary/50 font-semibold">City</h3>
-                  <p className="text-secondary/70 font-medium">{item.city}</p>
+                  <h3 className="font-semibold text-secondary/50">City</h3>
+                  <p className="font-medium text-secondary/70">{item.city}</p>
                 </div>
                 <div>
-                  <h3 className="text-secondary/50 font-semibold">State</h3>
-                  <p className="text-secondary/70 font-medium">
+                  <h3 className="font-semibold text-secondary/50">State</h3>
+                  <p className="font-medium text-secondary/70">
                     {item.state} - {item.pincode}
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-secondary/50 font-semibold">Country</h3>
-                  <p className="text-secondary/70 font-medium">
+                  <h3 className="font-semibold text-secondary/50">Country</h3>
+                  <p className="font-medium text-secondary/70">
                     {item.country}
                   </p>
                 </div>

@@ -71,13 +71,14 @@ export default function CartDrawer({ button }: { button: ReactNode }) {
       open={isDrawerOpen}
       onOpenChange={
         isLoggedIn ? (isOpen) => isSetDrawerOpen(isOpen) : undefined
-      }>
+      }
+    >
       <DrawerTrigger onClick={handleToast}>{button}</DrawerTrigger>
       <DrawerContent className="h-4/5 border-none">
-        <Card className="!p-0 border-none md:w-4/5  md:mx-auto  w-full ">
-          <CardHeader className="flex justify-between mb-auto border-b">
-            <CardTitle className="flex items-center justify-between   ">
-              <span className="flex  items-center gap-2">
+        <Card className="w-full border-none !p-0 md:mx-auto md:w-4/5">
+          <CardHeader className="mb-auto flex justify-between border-b">
+            <CardTitle className="flex items-center justify-between">
+              <span className="flex items-center gap-2">
                 Shopping Cart <ShoppingCartIcon />
               </span>
               <X
@@ -94,36 +95,40 @@ export default function CartDrawer({ button }: { button: ReactNode }) {
                   {cartItems.map((item, index) => (
                     <TableRow
                       key={index}
-                      className=" h-32  w-full flex items-center py-10  justify-evenly ">
+                      className="flex h-32 w-full items-center justify-evenly py-10"
+                    >
                       <TableCell className="table-cell">
                         <img
                           alt="Product image"
-                          className=" w-20 object-cover"
+                          className="w-20 object-cover"
                           src={item.image}
                         />
                       </TableCell>
-                      <TableCell className=" font-semibold text-md flex flex-col items-start  p-0  gap-2  my-auto mr-auto h-full  justify-center   ">
+                      <TableCell className="text-md my-auto mr-auto flex h-full flex-col items-start justify-center gap-2 p-0 font-semibold">
                         {item.name}
                         <Button
                           variant="link"
-                          className="!no-underline p-0 text-xs flex items-center text-secondary">
-                          <Trash2 className="text-destructive " /> Remove
+                          className="flex items-center p-0 text-xs text-secondary !no-underline"
+                        >
+                          <Trash2 className="text-destructive" /> Remove
                         </Button>
                       </TableCell>
 
                       <TableCell className="table-cell">
-                        <div className="flex items-center  ">
+                        <div className="flex items-center">
                           <button
                             onClick={handleDecrement}
-                            className="border-l py-1 px-3   border-t border-b rounded-l-md ">
+                            className="rounded-l-md border-b border-l border-t px-3 py-1"
+                          >
                             -
                           </button>
-                          <p className="text-sm font-medium border  py-1  px-2 ">
+                          <p className="border px-2 py-1 text-sm font-medium">
                             {quantity}
                           </p>
                           <button
                             onClick={handleIncrement}
-                            className="border-r py-1  px-3 border-t border-b rounded-r-md ">
+                            className="rounded-r-md border-b border-r border-t px-3 py-1"
+                          >
                             +
                           </button>
                         </div>
@@ -136,17 +141,19 @@ export default function CartDrawer({ button }: { button: ReactNode }) {
                 </TableBody>
               </ScrollArea>
             </Table>
-            <CardFooter className="flex mt-2 p-0 w-full flex-row items-center justify-between ">
+            <CardFooter className="mt-2 flex w-full flex-row items-center justify-between p-0">
               <Button
                 variant="outline"
                 onClick={() => isSetDrawerOpen(false)}
-                className=" rounded-lg ">
+                className="rounded-lg"
+              >
                 Continue Shopping
               </Button>
               <Link
                 to={isLoggedIn ? "/cart" : "/login"}
                 onClick={() => isSetDrawerOpen(false)}
-                className={cn(buttonVariants({ variant: "default" }))}>
+                className={cn(buttonVariants({ variant: "default" }))}
+              >
                 Proceed To Checkout
               </Link>
             </CardFooter>

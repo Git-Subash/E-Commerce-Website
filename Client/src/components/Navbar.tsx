@@ -54,15 +54,15 @@ export default function Navbar() {
   };
 
   return (
-    <header className=" h-40 md:h-28 shadow-md sticky top-0 z-40  gap-1 bg-white">
-      <div className="w-full bg-primary/20 flex justify-center md:justify-between  h-8">
-        <MaxWidthWrapper className="  flex justify-center  items-center text-sm">
+    <header className="sticky top-0 z-40 h-40 gap-1 bg-white shadow-md md:h-28">
+      <div className="flex h-8 w-full justify-center bg-primary/20 md:justify-between">
+        <MaxWidthWrapper className="flex items-center justify-center text-sm">
           <p>Super Value Deals - Save more with coupons</p>
         </MaxWidthWrapper>
       </div>
-      <MaxWidthWrapper className="mx-auto flex  items-center gap-16 ">
-        <div className="flex flex-col md:flex-row mb-4 items-center justify-between w-full gap-x-10 gap-y-2">
-          <div className=" flex items-center  w-full justify-between ">
+      <MaxWidthWrapper className="mx-auto flex items-center gap-16">
+        <div className="mb-4 flex w-full flex-col items-center justify-between gap-x-10 gap-y-2 md:flex-row">
+          <div className="flex w-full items-center justify-between">
             <Link to="/">
               <div className="flex items-center">
                 <img
@@ -73,20 +73,22 @@ export default function Navbar() {
               </div>
             </Link>
 
-            <div className="md:hidden flex items-center gap-3 ">
+            <div className="flex items-center gap-3 md:hidden">
               <Link
-                className="flex items-center text-primary/50  gap-2"
-                to={isLoggedIn ? "/profile-page/user-details" : "/login"}>
-                <UserRound className="bg-primary/20 w-10 p-2 rounded-full h-10" />
+                className="flex items-center gap-2 text-primary/50"
+                to={isLoggedIn ? "/profile-page" : "/login"}
+              >
+                <UserRound className="h-10 w-10 rounded-full bg-primary/20 p-2" />
               </Link>
 
               <CartDrawer
                 button={
-                  <button className="flex items-center relative text-primary/50  gap-4">
-                    <ShoppingCartIcon className="bg-primary/20 w-10 p-2 rounded-full h-10" />
+                  <button className="relative flex items-center gap-4 text-primary/50">
+                    <ShoppingCartIcon className="h-10 w-10 rounded-full bg-primary/20 p-2" />
                     <Badge
-                      className="absolute p-0.5 px-1.5 -top-1 -right-2 "
-                      variant="secondary">
+                      className="absolute -right-2 -top-1 p-0.5 px-1.5"
+                      variant="secondary"
+                    >
                       0
                     </Badge>
                   </button>
@@ -97,17 +99,18 @@ export default function Navbar() {
             </div>
           </div>
 
-          <div className="w-full  min-w-[300px]  ">
+          <div className="w-full min-w-[300px]">
             <SearchInput />
           </div>
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden items-center gap-3 md:flex">
             <CartDrawer
               button={
-                <button className="flex items-center relative text-primary/50  gap-4">
-                  <ShoppingCartIcon className="bg-primary/20 w-10 p-2 rounded-full h-10" />
+                <button className="relative flex items-center gap-4 text-primary/50">
+                  <ShoppingCartIcon className="h-10 w-10 rounded-full bg-primary/20 p-2" />
                   <Badge
-                    className="absolute p-0.5 px-1.5 -top-1 -right-2 "
-                    variant="secondary">
+                    className="absolute -right-2 -top-1 p-0.5 px-1.5"
+                    variant="secondary"
+                  >
                     0
                   </Badge>
                 </button>
@@ -118,15 +121,17 @@ export default function Navbar() {
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <Link
-                    className="flex items-center text-primary/50  gap-2"
-                    to={isLoggedIn ? "/profile-page/user-details" : "/login"}>
-                    <UserRound className="bg-primary/20 w-10 p-2 rounded-full h-10" />
+                    className="flex items-center gap-2 text-primary/50"
+                    to={isLoggedIn ? "/profile-page" : "/login"}
+                  >
+                    <UserRound className="h-10 w-10 rounded-full bg-primary/20 p-2" />
                   </Link>
                 </DropdownMenuTrigger>
 
                 <DropdownMenuContent
                   align="end"
-                  className="hidden sm:block px-2.5">
+                  className="hidden px-2.5 sm:block"
+                >
                   <DropdownMenuLabel className="text-md">
                     Hi! {user.name}
                     <p className="text-xs">{user.email}</p>
@@ -135,8 +140,9 @@ export default function Navbar() {
                   {isAdmin && (
                     <DropdownMenuItem className="mt-1">
                       <Link
-                        className="flex hover:text-secondary/70   items-center w-full  gap-2"
-                        to="/dashboard-page">
+                        className="flex w-full items-center gap-2 hover:text-secondary/70"
+                        to="/dashboard-page"
+                      >
                         <House />
                         Dasboard
                       </Link>
@@ -144,16 +150,18 @@ export default function Navbar() {
                   )}
                   <DropdownMenuItem className="">
                     <Link
-                      className="flex items-center w-full  hover:text-secondary/70  gap-2"
-                      to="/profile-page/order-details">
+                      className="flex w-full items-center gap-2 hover:text-secondary/70"
+                      to="/profile-page/order-details"
+                    >
                       <ShoppingBag />
                       Orders
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem className="mb-3">
                     <Link
-                      className="flex items-center w-full hover:text-secondary/70   gap-2"
-                      to="/profile-page">
+                      className="flex w-full items-center gap-2 hover:text-secondary/70"
+                      to="/profile-page"
+                    >
                       <UserRound />
                       Profile
                     </Link>
@@ -164,7 +172,8 @@ export default function Navbar() {
                       <Link
                         to="/login"
                         onClick={handleLogout}
-                        className="flex w-full  text-primary items-start gap-2 py-1">
+                        className="flex w-full items-start gap-2 py-1 text-primary"
+                      >
                         <LogOut /> Logout
                       </Link>
                     )}
@@ -176,8 +185,9 @@ export default function Navbar() {
                 to="/login"
                 className={cn(
                   "!text-md",
-                  buttonVariants({ variant: "default" })
-                )}>
+                  buttonVariants({ variant: "default" }),
+                )}
+              >
                 Login
               </Link>
             )}

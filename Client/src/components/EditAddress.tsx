@@ -57,7 +57,7 @@ export default function EditAddress({
   async function handleSubmit(
     data: z.infer<typeof addressSchema>,
     form: UseFormReturn<z.infer<typeof addressSchema>>,
-    closeDialog: () => void
+    closeDialog: () => void,
   ) {
     try {
       const response = await Axios({

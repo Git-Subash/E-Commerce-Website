@@ -1,6 +1,7 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import userReducer from "./userSlice";
 import addressReducer from "./addressSlice";
+import productReducer from "./ProductSlice";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
@@ -8,13 +9,14 @@ import storage from "redux-persist/lib/storage";
 const Persistconfig = {
   key: "root",
   storage,
-  whitelist: ["address", "user"], // Only persist the 'user' slice
+  whitelist: ["address", "user", "product"], // Only persist the 'user' slice
 };
 
 //combining both reducers
 const rootReducer = combineReducers({
   user: userReducer,
   address: addressReducer,
+  product: productReducer,
 });
 //wraping userReducer  with presistReducer
 const presistedReducer = persistReducer(Persistconfig, rootReducer);

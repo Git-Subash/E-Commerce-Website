@@ -42,7 +42,7 @@ const imageSchema = z.object({
     .custom<FileList>((val) => val instanceof FileList, "Required")
     .refine(
       (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-      ".jpg, .jpeg, .png and .webp files are accepted."
+      ".jpg, .jpeg, .png and .webp files are accepted.",
     )
     .refine((files) => files.length > 0, `Required`),
 });
@@ -50,8 +50,8 @@ export default function AddProfileImage() {
   const user = useSelector((state: RootState) => state.user);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const dispatch = useDispatch();
-
   const { toast } = useToast();
+  //react-form-hook
   const form = useForm<z.infer<typeof imageSchema>>({
     resolver: zodResolver(imageSchema),
     defaultValues: {
@@ -85,7 +85,7 @@ export default function AddProfileImage() {
           // window.location.reload();
           console.log(
             "User details fetched successfully:",
-            userDetails.data.avatar
+            userDetails.data.avatar,
           );
         } else {
           console.error("Error fetching user details:");
@@ -112,15 +112,16 @@ export default function AddProfileImage() {
       onOpenChange={(isOpen) => {
         setIsDialogOpen(isOpen);
         form.reset();
-      }}>
+      }}
+    >
       <DialogTrigger>
-        <div className="relative group  w-28 h-28   rounded-full border    ">
+        <div className="group relative h-28 w-28 rounded-full border">
           <img
             src={user.avatar || "/default-avatar.png"}
             alt="avatar"
-            className="rounded-full w-28 h-28  object-contain object-center"
+            className="h-28 w-28 rounded-full object-contain object-center"
           />
-          <UserRoundPen className="bg-gray-950/80 group-hover:block hidden text-white dark:text-gray-950 dark:bg-white absolute top-2 right-2  p-1.5 rounded-full" />
+          <UserRoundPen className="absolute right-2 top-2 hidden rounded-full bg-gray-950/80 p-1.5 text-white group-hover:block dark:bg-white dark:text-gray-950" />
         </div>
       </DialogTrigger>
       <DialogContent className="max-w-lg rounded-md">
@@ -152,7 +153,8 @@ export default function AddProfileImage() {
             <Button
               disabled={form.formState.isSubmitting}
               type="submit"
-              className="w-full  tracking-wide">
+              className="w-full tracking-wide"
+            >
               Save
               {form.formState.isSubmitting && (
                 <Loader className="ml-2 h-4 w-4 animate-spin" />

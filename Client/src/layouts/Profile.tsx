@@ -9,15 +9,17 @@ export default function Profile() {
   return (
     <GlobleContextProvider>
       <MaxWidthWrapper>
-        <div className="grid  w-full   md:grid-cols-[260px_1fr] lg:grid-cols-[280px_1fr]">
-          <div className="md:flex hidden justify-center   md:min-h-screen  border-r  rounded-lg   ">
+        <div className="grid w-full md:grid-cols-[260px_1fr] lg:grid-cols-[280px_1fr]">
+          <div className="hidden justify-center rounded-lg border-r md:flex md:min-h-screen">
             <Side />
           </div>
-          <div className="flex w-full   h-14 mt-10 gap-4 md:min-h-screen   border-b px-2.5  rounded-lg    ">
-            <Header />
-          </div>
-          <div className="md:hidden ">
-            <Outlet />
+          <div className="flex w-full flex-col md:px-4">
+            <div className="flex h-20 items-center gap-4 rounded-lg border-b md:hidden">
+              <Header />
+            </div>
+            <div className="md:mt-10">
+              <Outlet />
+            </div>
           </div>
         </div>
       </MaxWidthWrapper>

@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 export default function AddressPage() {
   const addressList = useSelector(
-    (state: RootState) => state.address.addressList
+    (state: RootState) => state.address.addressList,
   );
   const { fetchAddress } = useGlobleContext();
   const { toast } = useToast();
@@ -38,7 +38,7 @@ export default function AddressPage() {
           updateAddressStatus({
             _id: id,
             status: true,
-          })
+          }),
         );
         console.log("status updated success");
         if (fetchAddress) {
@@ -74,18 +74,19 @@ export default function AddressPage() {
   };
 
   return (
-    <div className=" relative px-2.5 md:px-4 w-full ">
-      <div className="flex pt-10 pb-10 md:pb-10 md:pt-0   justify-between items-center">
-        <h1 className="text-3xl px-4 font-semibold  ">My Address</h1>
+    <div className="relative">
+      <div className="flex items-center justify-between pb-10 pt-10 md:pb-10 md:pt-0">
+        <h1 className="px-4 text-3xl font-semibold">My Address</h1>
         <AddAddress />
       </div>
-      <ScrollArea className="h-[600px] mt-8 ">
-        <div className="flex mt-5 flex-wrap justify-center gap-3 mb-10 w-full">
+      <ScrollArea className="mt-8 h-[600px]">
+        <div className="mb-10 mt-5 flex w-full flex-wrap justify-center gap-3">
           {addressList.map((item: any, index: any) => (
             <label
               onClick={() => handleAddressStatus(item._id)}
               key={index}
-              className="cursor-pointer w-full  px-3">
+              className="w-full cursor-pointer px-3"
+            >
               <input
                 type="radio"
                 className="peer sr-only"
@@ -94,15 +95,15 @@ export default function AddressPage() {
                 onChange={() => handleAddressStatus(item._id)} // Update state on change
               />
               <div
-                className={`w-full rounded-md bg-white dark:bg-gray-900 border p-5 text-gray-600 dark:text-gray-300 ring-2 ring-transparent transition-all hover:shadow
-                 ${
-                   item.status
-                     ? "text-green-600 !ring-green-500 ring-offset-2"
-                     : ""
-                 }`}>
+                className={`w-full rounded-md border bg-white p-5 text-gray-600 ring-2 ring-transparent transition-all hover:shadow dark:bg-gray-900 dark:text-gray-300 ${
+                  item.status
+                    ? "text-green-600 !ring-green-500 ring-offset-2"
+                    : ""
+                }`}
+              >
                 <div className="flex flex-col gap-1">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-sm font-semibold uppercase text-gray-500 ">
+                  <div className="mb-2 flex items-center justify-between">
+                    <p className="text-sm font-semibold uppercase text-gray-500">
                       {item.address_title}
                     </p>
                     <div>
@@ -115,18 +116,19 @@ export default function AddressPage() {
                     </div>
                   </div>
                   <div className="flex flex-col justify-between">
-                    <p className="text-sm font-bold ">{item.address_line}</p>
+                    <p className="text-sm font-bold">{item.address_line}</p>
                     <p className="text-sm font-bold">
                       {item.city}, <span>{item.country}</span>
                     </p>
                   </div>
                   <p className="text-sm font-bold">{item.mobile},</p>
                 </div>
-                <div className="w-full gap-2 z-10 flex items-center justify-end">
+                <div className="z-10 flex w-full items-center justify-end gap-2">
                   <Button
                     onClick={(e) => handleDeleteAddress(item._id, e)}
                     className=""
-                    variant="destructive">
+                    variant="destructive"
+                  >
                     Delete
                   </Button>
                   <EditAddress

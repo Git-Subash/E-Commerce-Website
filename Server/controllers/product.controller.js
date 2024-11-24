@@ -9,10 +9,11 @@ export async function createProductController(req, res) {
       sub_categoryId,
       unit,
       stock,
+      status,
       price,
+      salePrice,
       discount,
       description,
-      more_details,
     } = req.body;
     if (
       !name ||
@@ -20,7 +21,9 @@ export async function createProductController(req, res) {
       !categoryId[0] ||
       !sub_categoryId[0] ||
       !unit ||
+      !status ||
       !price ||
+      !salePrice ||
       !description
     ) {
       return res.status(400).json({
@@ -36,10 +39,11 @@ export async function createProductController(req, res) {
       sub_categoryId,
       unit,
       stock,
+      status,
       price,
+      salePrice,
       discount,
       description,
-      more_details,
     });
     const saveProduct = await product.save();
 
