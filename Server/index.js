@@ -1,16 +1,17 @@
-import express from "express";
-import cors from "cors";
 import cookieParser from "cookie-parser";
+import cors from "cors";
+import dotenv from "dotenv";
+import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import connectDB from "./config/connectDB.js";
-import dotenv from "dotenv";
-dotenv.config();
-import userRouter from "./routes/user.routes.js";
 import addressRouter from "./routes/address.routes.js";
-import productRouter from "./routes/product.routes.js";
 import categoryRouter from "./routes/category.routes.js";
+import productRouter from "./routes/product.routes.js";
 import subCategoryRouter from "./routes/subCategory.routes.js";
+import uploadedRouter from "./routes/upload.routes.js";
+import userRouter from "./routes/user.routes.js";
+dotenv.config();
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ app.use(
   })
 );
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan("combined"));
 app.use(
@@ -43,6 +45,7 @@ app.use("/api/address", addressRouter);
 app.use("/api/product", productRouter);
 app.use("/api/category", categoryRouter);
 app.use("/api/sub-category", subCategoryRouter);
+app.use("/api/file", uploadedRouter);
 
 // Connecting to the database and running server
 connectDB()

@@ -1,5 +1,4 @@
 import App from "@/App";
-import AddSubCategory from "@/components/AddSubCategory";
 import Dashboard from "@/layouts/Dashboard";
 import Profile from "@/layouts/Profile";
 import AddressPage from "@/pages/AddressPage";
@@ -47,6 +46,7 @@ const router = createBrowserRouter(
         },
       ],
     },
+
     {
       path: "/dashboard-page",
       element: <Dashboard />,
@@ -55,23 +55,37 @@ const router = createBrowserRouter(
         {
           path: "products",
           element: <Products />,
-          children: [{ path: "add-product", element: <Products /> }],
+          children: [
+            { path: "add-product", element: <Products /> },
+            { path: "edit-product/:id", element: <Products /> },
+          ],
         },
-
         {
           path: "category",
           element: <Category />,
-          children: [{ path: "add-category", element: <Category /> }],
+          children: [
+            { path: "add-category", element: <Category /> },
+            { path: "edit-category/:id", element: <Category /> },
+          ],
         },
         {
           path: "sub-category",
           element: <SubCategory />,
-          children: [{ path: "add-sub-category", element: <AddSubCategory /> }],
+          children: [
+            { path: "add-sub-category", element: <SubCategory /> },
+            { path: "edit-sub-category/:id", element: <SubCategory /> },
+          ],
         },
         { path: "orders", element: <Orders /> },
         { path: "customers", element: <Customers /> },
       ],
     },
+
+    {
+      path: "/",
+      element: <App />,
+    },
+
     {
       path: "/verify-email",
       element: <VerfiyEmail />,

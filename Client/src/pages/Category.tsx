@@ -1,26 +1,12 @@
-import { Badge } from "@/components/ui/badge";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Ellipsis, Plus } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { Plus } from "lucide-react";
+import { useLocation, useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader } from "../components/ui/card";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-
-import AddCategory from "@/components/AddCategory";
+import CategoryForm from "@/components/CategoryForm";
+import DashboardBreadcrumb from "@/components/DashboardBreadcrumb";
 import GenericTable from "@/components/GenericTable";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -28,7 +14,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { statusTypes } from "@/constants/details";
 import { SummaryApi } from "@/constants/SummaryApi";
+import { useToast } from "@/hooks/use-toast";
+import { actions, categoryColumns } from "@/lib/Actions";
 import Axios from "@/lib/Axios";
 import { setCategory } from "@/store/ProductSlice";
 import { RootState } from "@/store/store";
@@ -36,75 +25,29 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-const columns = [
-  {
-    header: "Image",
-    key: "image",
-    render: (value: string | undefined) => (
-      <img
-        src={value}
-        alt="product"
-        className="h-10 w-10 rounded-md object-cover"
-      />
-    ),
-  },
-  { header: "Category", key: "category" },
-  {
-    header: "Status",
-    key: "status",
-    render: (value: boolean) => (
-      <Badge
-        className={`rounded-sm p-1 px-1.5 text-xs ${
-          value === true
-            ? "bg-green-500/50 text-green-900 hover:bg-green-500/50"
-            : "hover:bg-red-500/ 50 bg-red-500/50 text-red-950"
-        }`}
-      >
-        {value === true ? "Actice" : "Disable"}
-      </Badge>
-    ),
-  },
-  { header: "Created At", key: "createdAt" },
-];
-const statusTypes = [
-  { label: "Active", value: "active" },
-  { label: "Disabled", value: "disabled" },
-  { label: "Status", value: "all" },
-] as const;
-
-const actions = () => (
-  <DropdownMenu>
-    <DropdownMenuTrigger>
-      <Ellipsis className="p-1" />
-    </DropdownMenuTrigger>
-    <DropdownMenuContent align="end">
-      <DropdownMenuItem>Edit</DropdownMenuItem>
-      <DropdownMenuItem>Delete</DropdownMenuItem>
-    </DropdownMenuContent>
-  </DropdownMenu>
-);
-
 export default function Category() {
   const location = useLocation();
-
   const dispatch = useDispatch();
+  const { toast } = useToast();
+  const { id: selectedId } = useParams();
   const [search, setSearch] = React.useState("");
   const [status, setStatus] = React.useState("");
 
   const categoryList = useSelector(
     (state: RootState) => state.product.categoryList,
   );
+  const productsData = categoryList.map((category: any) => ({
+    id: category._id || "N/A",
+    image: category.image || "default.jpg",
+    category: category.name || "Unnamed",
+    status: category.status ?? false,
+    createdAt: new Date().toISOString().split("T")[0],
+  }));
 
-  // Use categoryList directly for productsData mapping
-  const productsData = Array.isArray(categoryList)
-    ? categoryList.map((category: any) => ({
-        id: category._id || "N/A",
-        image: category.image || "default.jpg",
-        category: category.name || "Unnamed",
-        status: category.status ?? false,
-        createdAt: new Date().toISOString().split("T")[0],
-      }))
-    : [];
+  const selectedCategory = categoryList.find(
+    (category: { _id: string }) => category._id === selectedId,
+  );
+
   const [filteredData, setFilteredData] = React.useState(productsData);
 
   React.useEffect(() => {
@@ -141,48 +84,56 @@ export default function Category() {
       }
     } catch (error) {}
   };
+  const handleDeleteCategory = async (id: string) => {
+    try {
+      const response = await Axios({
+        ...SummaryApi.delete_Category,
+        data: {
+          _id: id,
+        },
+      });
+      if (response.data) {
+        setFilteredData(filteredData.filter((item) => item.id !== id));
+        window.location.reload();
+        toast({
+          variant: "default",
+          title: "category Removed successful ",
+        });
+      }
+    } catch (error) {}
+  };
+
   React.useEffect(() => {
     setFilteredData(productsData);
   }, [productsData]);
 
   let isAddCategory =
     location.pathname == "/dashboard-page/category/add-category";
+  let isEditCategory =
+    location.pathname == `/dashboard-page/category/edit-category/${selectedId}`;
+
+  const renderActions = (id: string) =>
+    actions(id, "category/edit-category", handleDeleteCategory);
 
   return (
     <div className="relative w-full">
       <div className="flex flex-wrap items-center justify-between gap-y-4 pb-10 pt-10 md:pb-10 md:pt-0">
         <div className="flex flex-col items-start gap-2">
           <h1 className="text-3xl font-semibold">
-            {!isAddCategory ? "Category" : "Add New Category"}
+            {isAddCategory && !isEditCategory
+              ? "Add New Category"
+              : !isAddCategory && isEditCategory
+                ? "Edit Category"
+                : "Category"}
           </h1>
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink href="/dashboard-page" className="font-medium">
-                  Dashboard
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator>/</BreadcrumbSeparator>
-              <BreadcrumbItem>
-                <BreadcrumbLink
-                  href="/dashboard-page/category"
-                  className="font-medium"
-                >
-                  Category
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              {isAddCategory && (
-                <>
-                  <BreadcrumbSeparator>/</BreadcrumbSeparator>
-                  <BreadcrumbItem>
-                    <BreadcrumbLink>Add Category</BreadcrumbLink>
-                  </BreadcrumbItem>
-                </>
-              )}
-            </BreadcrumbList>
-          </Breadcrumb>
+          <DashboardBreadcrumb
+            pathName="Category"
+            path="category"
+            isAdd={isAddCategory}
+            isEdit={isEditCategory}
+          />
         </div>
-        {!isAddCategory ? (
+        {!isAddCategory && !isEditCategory ? (
           <Link
             to="/dashboard-page/category/add-category"
             className="group flex h-10 items-center gap-2 rounded-md border-2 border-transparent bg-primary px-4 py-2 text-sm font-bold text-white transition-all duration-200 hover:border-primary/50 hover:bg-white hover:text-black"
@@ -199,10 +150,19 @@ export default function Category() {
           </Link>
         )}
       </div>
-      {isAddCategory ? (
-        <AddCategory />
+      {isAddCategory && !isEditCategory ? (
+        <CategoryForm />
+      ) : !isAddCategory && isEditCategory ? (
+        <CategoryForm
+          id={selectedId}
+          initialData={{
+            name: selectedCategory?.name || "",
+            status: selectedCategory?.status || false,
+            image: selectedCategory?.image,
+            role: "edit",
+          }}
+        />
       ) : (
-        // <div>subas</div>
         <Card className="my-10">
           <CardHeader className="w-full items-center justify-between gap-2 sm:flex-row">
             <Input
@@ -231,9 +191,9 @@ export default function Category() {
             <ScrollArea className="min-w-full max-w-sm whitespace-nowrap sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-xl">
               {filteredData.length > 0 ? (
                 <GenericTable
-                  columns={columns}
+                  columns={categoryColumns}
                   data={filteredData}
-                  actions={actions}
+                  actions={(row) => renderActions(row.id)}
                 />
               ) : (
                 <div className="p-4 text-center text-gray-500">

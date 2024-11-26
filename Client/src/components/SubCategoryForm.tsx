@@ -1,6 +1,13 @@
+import { useToast } from "@/hooks/use-toast";
+import { RootState } from "@/store/store";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { z } from "zod";
+import { Button } from "./ui/button";
+import { Card, CardContent } from "./ui/card";
 import {
   Form,
   FormControl,
@@ -9,16 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
-import { Button } from "./ui/button";
 import { Input } from "./ui/input";
-import { Loader } from "lucide-react";
-import { Card, CardContent } from "./ui/card";
-import { SummaryApi } from "@/constants/SummaryApi";
-import Axios from "@/lib/Axios";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { setSubCtegory } from "@/store/ProductSlice";
-import { useToast } from "@/hooks/use-toast";
 import {
   Select,
   SelectContent,
@@ -26,21 +24,38 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { RootState } from "@/store/store";
+import { subCategorySchema } from "@/constants/schema";
+import Axios from "@/lib/Axios";
+import { SummaryApi } from "@/constants/SummaryApi";
 
-const Schema = z.object({
-  name: z.string().min(2, {
-    message: "Title must be at least 2 characters.",
-  }),
-  category: z.string().min(2, {
-    message: "Title must be at least 2 characters.",
-  }),
-});
-
-export default function AddSubCategory() {
+interface SubCategoryFormProps {
+  id?: string;
+  initialData?: {
+    name: string;
+    category: string;
+    role: "edit" | "add";
+  };
+}
+export default function SubCategoryForm({
+  initialData,
+  id,
+}: SubCategoryFormProps) {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const { toast } = useToast();
+  const form = useForm<z.infer<typeof subCategorySchema>>({
+    resolver: zodResolver(subCategorySchema),
+    defaultValues: initialData
+      ? {
+          name: initialData?.name,
+          category: initialData?.category,
+          role: initialData.role,
+        }
+      : {
+          name: "",
+          category: "",
+          role: "add",
+        },
+  });
   const categoryList = useSelector(
     (state: RootState) => state.product.categoryList,
   );
@@ -53,40 +68,50 @@ export default function AddSubCategory() {
       }))
     : [];
 
-  const form = useForm<z.infer<typeof Schema>>({
-    resolver: zodResolver(Schema),
-    defaultValues: {
-      name: "",
-      category: "",
-    },
-  });
-  async function onSubmit(data: z.infer<typeof Schema>) {
+  async function handleSubmit(data: z.infer<typeof subCategorySchema>) {
     try {
-      const response = await Axios({
-        ...SummaryApi.add_SubCategory,
-        data: {
-          categoryId: data.category,
-          name: data.name,
-        },
-      });
-
-      const { data: responseData } = response;
-
-      if (responseData.data) {
-        form.reset();
-        navigate("/dashboard-page/sub-category");
-        window.location.reload();
-        toast({
-          title: "Category Uploaded",
-          description: "Your Profile has been created successfully.",
+      let response;
+      if (initialData) {
+        response = await Axios({
+          ...SummaryApi.update_SubCategory,
+          data: {
+            _id: id,
+            categoryId: data.category,
+            name: data.name,
+          },
+        });
+      } else {
+        response = await Axios({
+          ...SummaryApi.add_SubCategory,
+          data: {
+            categoryId: data.category,
+            name: data.name,
+          },
         });
       }
-    } catch (error) {}
+      console.log(" Aub-category response Data", response);
+      form.reset();
+      navigate("/dashboard-page/sub-category");
+      window.location.reload();
+      toast({
+        title:
+          initialData?.role === "add"
+            ? "Sub-Category Added"
+            : "Sub-Category Updated",
+        description: "The category has been successfully saved.",
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to save the category. Please try again.",
+      });
+    }
   }
   return (
     <div className="mt-6">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
           {/* Category */}
           <Card>
             <CardContent className="h-ful4 mt-2 w-full p-6">

@@ -1,25 +1,8 @@
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Ellipsis, Plus } from "lucide-react";
-import { useLocation } from "react-router-dom";
-import { Card, CardContent, CardHeader } from "../components/ui/card";
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-
-import AddSubCategory from "@/components/AddSubCategory";
+import DashboardBreadcrumb from "@/components/DashboardBreadcrumb";
 import GenericTable from "@/components/GenericTable";
+import SubCategoryForm from "@/components/SubCategoryForm";
+import { Input } from "@/components/ui/input";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -28,65 +11,53 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SummaryApi } from "@/constants/SummaryApi";
+import { actions, subCategoryColumns } from "@/lib/Actions";
 import Axios from "@/lib/Axios";
-import { setSubCtegory } from "@/store/ProductSlice";
+import { setSubCategory } from "@/store/ProductSlice";
 import { RootState } from "@/store/store";
+import { Plus } from "lucide-react";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-
-const columns = [
-  { header: "Sub_Category", key: "subcategory" },
-  { header: "Category", key: "category" },
-
-  { header: "Created At", key: "createdAt" },
-];
-
-const actions = () => (
-  <DropdownMenu>
-    <DropdownMenuTrigger>
-      <Ellipsis className="p-1" />
-    </DropdownMenuTrigger>
-    <DropdownMenuContent align="end">
-      <DropdownMenuItem>Edit</DropdownMenuItem>
-      <DropdownMenuItem>Delete</DropdownMenuItem>
-    </DropdownMenuContent>
-  </DropdownMenu>
-);
+import { Link, useLocation, useParams } from "react-router-dom";
+import { Card, CardContent, CardHeader } from "../components/ui/card";
+import { useToast } from "@/hooks/use-toast";
 
 export default function SubCategory() {
   const location = useLocation();
-  let isAddCategory =
-    location.pathname == "/dashboard-page/sub-category/add-sub-category";
   const dispatch = useDispatch();
+  const { id: selectedId } = useParams();
+  const { toast } = useToast();
   const [search, setSearch] = React.useState("");
   const [selectedCategory, setSelectedCategory] = React.useState("");
-
   const SubcategoryList = useSelector(
     (state: RootState) => state.product.subcategoryList,
   );
-
   const categoryList = useSelector(
     (state: RootState) => state.product.categoryList,
   );
 
   // Create a lookup map for categories
-  const categoryLookup = Array.isArray(categoryList)
-    ? new Map(
-        categoryList.map((category: any) => [category._id, category.name]),
-      )
-    : new Map();
+  const categoryLookup = new Map(
+    categoryList.map((category: { _id: string; name: string }) => [
+      category._id,
+      category.name,
+    ]),
+  );
 
   // Use SubcategoryList directly for productsData mapping
-  const productsData = Array.isArray(SubcategoryList)
-    ? SubcategoryList.map((subcategory: any) => ({
-        id: subcategory._id || "N/A",
-        subcategory: subcategory.name || "Unnamed Subcategory",
-        category:
-          categoryLookup.get(subcategory.categoryId) || "Unknown Category",
-        createdAt: new Date().toISOString().split("T")[0],
-      }))
-    : [];
+  const productsData = SubcategoryList.map((subcategory: any) => ({
+    id: subcategory._id || "N/A",
+    subcategory: subcategory.name || "Unnamed Subcategory",
+    category: categoryLookup.get(subcategory.categoryId) || "Unknown Category", // Look up the category name
+    createdAt: new Date().toISOString().split("T")[0],
+  }));
+
+  //this is used for table
+  const selectedSubCategory = SubcategoryList.find(
+    (subCategory: { _id: string; categoryId: string }) =>
+      subCategory._id === selectedId &&
+      categoryLookup.has(subCategory.categoryId),
+  );
   const [filteredData, setFilteredData] = React.useState(productsData);
 
   //seting the values for the select
@@ -108,7 +79,7 @@ export default function SubCategory() {
       });
 
       if (response.data.data) {
-        dispatch(setSubCtegory(response.data.data));
+        dispatch(setSubCategory(response.data.data));
         setFilteredData(
           response.data.data.map((subcategory: any) => ({
             id: subcategory._id || "N/A",
@@ -121,6 +92,27 @@ export default function SubCategory() {
       }
     } catch (error) {}
   }
+  async function handleDelete(id: string) {
+    try {
+      const response = await Axios({
+        ...SummaryApi.delete_SubCategory,
+        data: { _id: id },
+      });
+      if (response.data) {
+        window.location.reload();
+        setFilteredData(filteredData.filter((item) => item.id !== id));
+        toast({
+          variant: "default",
+          title: "Sub-category deleted",
+        });
+      }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Error deleting sub-category",
+      });
+    }
+  }
 
   React.useEffect(() => {
     setFilteredData(productsData);
@@ -130,41 +122,34 @@ export default function SubCategory() {
     fetchFilteresSubCategory();
   }, [search, selectedCategory]);
 
+  let isAddCategory =
+    location.pathname == "/dashboard-page/sub-category/add-sub-category";
+  let isEditCategory =
+    location.pathname ==
+    `/dashboard-page/sub-category/edit-sub-category/${selectedId}`;
+
+  const renderActions = (id: string) =>
+    actions(id, "sub-category/edit-sub-category", handleDelete);
+
   return (
     <div className="relative w-full">
       <div className="flex flex-wrap items-center justify-between gap-y-4 pb-10 pt-10 md:pb-10 md:pt-0">
         <div className="flex flex-col items-start gap-2">
           <h1 className="text-3xl font-semibold">
-            {!isAddCategory ? "Sub-Category" : "Add New Sub-Category"}
+            {isAddCategory && !isEditCategory
+              ? "Add New Sub-Category"
+              : !isAddCategory && isEditCategory
+                ? "Edit Sub-Category"
+                : "Sub_Category"}
           </h1>
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem>
-                <BreadcrumbLink href="/dashboard-page" className="font-medium">
-                  Dashboard
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator>/</BreadcrumbSeparator>
-              <BreadcrumbItem>
-                <BreadcrumbLink
-                  href="/dashboard-page/sub-category"
-                  className="font-medium"
-                >
-                  Sub-Category
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              {isAddCategory && (
-                <>
-                  <BreadcrumbSeparator>/</BreadcrumbSeparator>
-                  <BreadcrumbItem>
-                    <BreadcrumbLink>Add Sub-Category</BreadcrumbLink>
-                  </BreadcrumbItem>
-                </>
-              )}
-            </BreadcrumbList>
-          </Breadcrumb>
+          <DashboardBreadcrumb
+            pathName="Sub-Category"
+            path="sub-category"
+            isAdd={isAddCategory}
+            isEdit={isEditCategory}
+          />
         </div>
-        {!isAddCategory ? (
+        {!isAddCategory && !isEditCategory ? (
           <Link
             to="/dashboard-page/sub-category/add-sub-category"
             className="group flex h-10 items-center gap-2 rounded-md border-2 border-transparent bg-primary px-4 py-2 text-sm font-bold text-white transition-all duration-200 hover:border-primary/50 hover:bg-white hover:text-black"
@@ -181,8 +166,39 @@ export default function SubCategory() {
           </Link>
         )}
       </div>
-      {isAddCategory ? (
-        <AddSubCategory />
+      {isAddCategory && !isEditCategory ? (
+        <SubCategoryForm
+
+        // onSubmit={async (data) => {
+        //   const response = await Axios({
+        //     ...SummaryApi.add_SubCategory,
+        //     data: {
+        //       categoryId: data.category,
+        //       name: data.name,
+        //     },
+        //   });
+        //   console.log("sub-category: ", response.data);
+        // }}
+        />
+      ) : !isAddCategory && isEditCategory ? (
+        <SubCategoryForm
+          id={selectedId}
+          initialData={{
+            role: "edit",
+            name: selectedSubCategory?.name || "",
+            category: selectedSubCategory?.categoryId || "",
+          }}
+          // onSubmit={async (data) => {
+          //   await Axios({
+          //     ...SummaryApi.update_SubCategory,
+          //     data: {
+          //       _id: selectedId,
+          //       categoryId: data.category,
+          //       name: data.name,
+          //     },
+          //   });
+          // }}
+        />
       ) : (
         <Card className="my-10">
           <CardHeader className="w-full items-center justify-between gap-2 sm:flex-row">
@@ -211,9 +227,9 @@ export default function SubCategory() {
             <ScrollArea className="min-w-full max-w-sm whitespace-nowrap sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-xl">
               {filteredData.length > 0 ? (
                 <GenericTable
-                  columns={columns}
+                  columns={subCategoryColumns}
                   data={filteredData}
-                  actions={actions}
+                  actions={(row) => renderActions(row.id)}
                 />
               ) : (
                 <div className="p-4 text-center text-gray-500">

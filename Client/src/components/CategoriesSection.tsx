@@ -10,22 +10,24 @@ import React from "react";
 import { Link } from "react-router-dom";
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import { Card } from "./ui/card";
-
-const list = [
-  { name: " Dairy, Bread & Eggs", to: "/", image: "/category-1.jpg" },
-  { name: "Snacks & Munchies", to: "/", image: "/category-2.jpg" },
-  { name: "Fruits & Vegetables", to: "/", image: "/category-7.jpg" },
-  { name: "  Cold Drinks & Juices", to: "/", image: "/category-6.jpg" },
-  { name: " Breakfast & Instant Food", to: "/", image: "/category-5.jpg" },
-  { name: "Bakery & Biscuits", to: "/", image: "/category-3.jpg" },
-  { name: " Chicken, Meat & Fish", to: "/", image: "/category-8.jpg" },
-];
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 export default function CategoriesSection() {
   const plugin = React.useRef(
     Autoplay({ delay: 2000, stopOnInteraction: true }),
   );
   const [api, setApi] = React.useState<CarouselApi>();
+
+  const categoryylist = useSelector(
+    (state: RootState) => state.product.categoryList,
+  );
+
+  const categories = categoryylist.map((category) => ({
+    name: category.name,
+    to: "/",
+    image: category.image,
+  }));
 
   // Handle navigation for the arrows
   const handleRightClick = () => {
@@ -64,13 +66,13 @@ export default function CategoriesSection() {
         onMouseLeave={plugin.current.reset}
       >
         <CarouselContent>
-          {list.map((_item, index) => (
+          {categories.map((_item, index) => (
             <CarouselItem
               key={index}
-              className="basis-1/2 sm:basis-1/3 lg:basis-1/4 xl:basis-1/5"
+              className="basis-1/2 p-4 sm:basis-1/3 lg:basis-1/4 xl:basis-1/5"
             >
-              <Link to={_item.to} className=" ">
-                <Card className="mt-6 flex flex-col items-center justify-center gap-6 p-4">
+              <Link to={_item.to} className="h-full">
+                <Card className="flex h-full flex-col items-center justify-center gap-6 p-4">
                   <img src={_item.image} className="mx-auto h-32 w-32" />
                   <p>{_item.name}</p>
                 </Card>

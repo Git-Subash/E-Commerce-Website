@@ -1,6 +1,10 @@
 export const baseURL = "http://localhost:3000";
 
 export const SummaryApi = {
+  uploadImage: {
+    url: "/api/file/upload",
+    method: "post",
+  },
   register: {
     url: "/api/user/register",
     method: "post",
@@ -69,17 +73,25 @@ export const SummaryApi = {
     url: "/api/category/create",
     method: "post",
   },
-  add_SubCategory: {
-    url: "/api/sub-category/create",
-    method: "post",
-  },
   get_Category: {
     url: "/api/category/get",
     method: "get",
   },
+  update_Category: {
+    url: "/api/category/update",
+    method: "put",
+  },
+  delete_Category: {
+    url: "/api/category/delete",
+    method: "delete",
+  },
   filter_Category: {
     url: "/api/category/filter",
     method: "get",
+  },
+  add_SubCategory: {
+    url: "/api/sub-category/create",
+    method: "post",
   },
   get_SubCategory: {
     url: "/api/sub-category/get",
@@ -88,5 +100,29 @@ export const SummaryApi = {
   filter_SubCategory: {
     url: "/api/sub-category/filter",
     method: "get",
+  },
+  update_SubCategory: {
+    url: "/api/sub-category/update",
+    method: "put",
+  },
+  delete_SubCategory: {
+    url: "/api/sub-category/delete",
+    method: "delete",
+  },
+  add_product: {
+    url: "/api/product/create",
+    method: "post",
+  },
+  fileter_product: {
+    url: "/api/product/filter",
+    method: "get",
+  },
+  update_product: {
+    url: "/api/product/update",
+    method: "put",
+  },
+  delete_product: {
+    url: "/api/product/delete",
+    method: "delete",
   },
 };

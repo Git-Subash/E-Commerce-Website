@@ -15,7 +15,7 @@ export default function Dasboard() {
             <div className="flex h-16 items-center justify-center border-b px-5 xl:items-start xl:px-5">
               <DashboardHeader />
             </div>
-            <div className="px-5 md:mt-10">
+            <div className="px-5">
               <Outlet />
             </div>
           </div>

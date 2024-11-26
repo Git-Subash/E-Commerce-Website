@@ -1,10 +1,10 @@
 import categoryModel from "../models/category,model.js";
-import cloudinaryImageUpload from "../utils/cloudinaryImageUpload.js";
+import productModel from "../models/product.model.js";
+import subCategoryModel from "../models/sub_category.model.js";
 
 export async function createCategoryController(req, res) {
   try {
-    const { name, status } = req.body;
-    const image = req.file;
+    const { name, status, image } = req.body;
 
     if (!name || !status) {
       return res.status(400).json({
@@ -21,12 +21,10 @@ export async function createCategoryController(req, res) {
       });
     }
 
-    const upload = await cloudinaryImageUpload(image);
-
     const createCategory = new categoryModel({
       name: name,
       status: status,
-      image: upload.url, //the image is in  upload :{url: imageUrl}
+      image: image,
     });
 
     const saveCategory = await createCategory.save();
@@ -91,6 +89,90 @@ export async function filterCategoryController(req, res) {
   } catch (error) {
     return res.status(500).json({
       message: "Failed to fetch products",
+      success: false,
+    });
+  }
+}
+
+export async function updateCategoryController(req, res) {
+  try {
+    const { _id, name, status, image } = req.body;
+
+    if (!_id) {
+      return res.status(400).json({
+        message: "provide category _id",
+        error: true,
+        success: false,
+      });
+    }
+    const updateData = { name, status, image };
+
+    const updateCategory = await categoryModel.findByIdAndUpdate(
+      { _id: _id },
+      updateData,
+      { new: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: " category Updated Successful",
+      data: updateCategory,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: true,
+      success: false,
+      message: error.message || error,
+    });
+  }
+}
+
+export async function deleteCategoryController(req, res) {
+  try {
+    const { _id } = req.body;
+
+    if (!_id) {
+      res.json({
+        message: "Provide the id",
+        success: true,
+        error: false,
+      });
+    }
+
+    const checkSubCategory = await subCategoryModel
+      .find({
+        category: {
+          $in: [_id],
+        },
+      })
+      .countDocuments();
+
+    const checkProduct = await productModel
+      .find({
+        category: {
+          $in: [_id],
+        },
+      })
+      .countDocuments();
+
+    if (checkSubCategory > 0 || checkProduct > 0) {
+      return res.status(400).json({
+        message: "Category is already use can't delete",
+        error: true,
+        success: false,
+      });
+    }
+
+    const deleteCategory = await categoryModel.deleteOne({ _id: _id });
+
+    res.status(200).json({
+      message: "Product deleted successful",
+      success: true,
+      data: deleteCategory,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message || error,
       success: false,
     });
   }

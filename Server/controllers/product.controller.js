@@ -15,26 +15,12 @@ export async function createProductController(req, res) {
       discount,
       description,
     } = req.body;
-    if (
-      !name ||
-      !image[0] ||
-      !categoryId[0] ||
-      !sub_categoryId[0] ||
-      !unit ||
-      !status ||
-      !price ||
-      !salePrice ||
-      !description
-    ) {
-      return res.status(400).json({
-        message: "Proveide the requied fields",
-        success: false,
-        error: true,
-      });
-    }
+
+    console.log("Request body:", req.body);
+
     const product = new productModel({
       name,
-      image,
+      image, // Save array of image URLs
       categoryId,
       sub_categoryId,
       unit,
@@ -45,6 +31,7 @@ export async function createProductController(req, res) {
       discount,
       description,
     });
+
     const saveProduct = await product.save();
 
     return res.status(200).json({
@@ -64,17 +51,7 @@ export async function createProductController(req, res) {
 
 export async function getProductsDetails(req, res) {
   try {
-    const { productId } = req.body;
-
-    if (!productId) {
-      return res.status(400).json({
-        message: "productId is required",
-        error: true,
-        success: false,
-      });
-    }
-
-    const getProduct = await productModel.findOne({ _id: productId });
+    const getProduct = await productModel.find().sort({ createdAt: -1 });
 
     return res.json({
       message: "Product details",
@@ -93,25 +70,25 @@ export async function getProductsDetails(req, res) {
 
 export async function updateProductDetails(req, res) {
   try {
+    console.log("Request body:", req.body);
     const { _id } = req.body;
 
-    if (!_id) {
-      return response.status(400).json({
-        message: "provide product _id",
+    const checkProduct = await productModel.findById(_id);
+
+    if (!checkProduct) {
+      return res.status(400).json({
+        message: "check your product_id",
         error: true,
         success: false,
       });
     }
 
-    const updateProduct = await productModel.findByIdAndUpdate(
-      { _id: _id },
-      {
-        ...req.body,
-      }
-    );
+    const updateProduct = await productModel.findByIdAndUpdate(_id, {
+      ...req.body,
+    });
 
     return res.status(200).json({
-      message: "product UPdated successfull",
+      message: "product Updated successfull",
       success: true,
       error: false,
       data: updateProduct,
@@ -150,6 +127,34 @@ export async function deleteProduct(req, res) {
       message: error.message || error,
       success: false,
       error: true,
+    });
+  }
+}
+
+export async function filterProduct(req, res) {
+  try {
+    const { search, status } = req.query;
+
+    //create a filter
+    const filter = {};
+    if (search) {
+      filter.name = { $regex: search, $options: "i" };
+    }
+    // Add status filter (convert string to boolean)
+    if (status !== undefined && status !== "all") {
+      filter.status = status === "true";
+    }
+    const product = await productModel.find(filter);
+
+    return res.status(200).json({
+      error: false,
+      success: true,
+      data: product,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to fetch products",
+      success: false,
     });
   }
 }

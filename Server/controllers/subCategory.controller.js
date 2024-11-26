@@ -87,3 +87,63 @@ export async function getFilterSubCategory(req, res) {
     });
   }
 }
+
+export async function updateSubCategoryController(req, res) {
+  try {
+    const { _id, name, categoryId } = req.body;
+
+    const checkSub = await subCategoryModel.findById(_id);
+
+    if (!checkSub) {
+      return res.status(400).json({
+        message: "check your sub-category _id",
+        error: true,
+        success: false,
+      });
+    }
+
+    const updateSubCategory = await subCategoryModel.findByIdAndUpdate(_id, {
+      name,
+      categoryId,
+    });
+
+    res.status(200).json({
+      message: "Sub-Category Updated successfull",
+      success: true,
+      data: updateSubCategory,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message || error,
+      success: true,
+    });
+  }
+}
+
+export async function deleteSubCategory(req, res) {
+  try {
+    const { _id } = req.body;
+
+    if (!_id) {
+      return res.json({
+        message: "provide id",
+        success: false,
+        error: true,
+      });
+    }
+    const deleteSub = await subCategoryModel.deleteOne({ _id: _id });
+
+    return res.status(200).json({
+      message: "deleted succesfully",
+      data: deleteSub,
+      success: true,
+      error: false,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      success: false,
+      error: true,
+    });
+  }
+}

@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   createProductController,
   deleteProduct,
+  filterProduct,
   getProductsDetails,
   updateProductDetails,
 } from "../controllers/product.controller.js";
@@ -14,5 +15,6 @@ productRouter.post("/create", auth, admin, createProductController);
 productRouter.get("/get", auth, admin, getProductsDetails);
 productRouter.put("/update", auth, admin, updateProductDetails);
 productRouter.delete("/delete", auth, admin, deleteProduct);
+productRouter.get("/filter", filterProduct);
 
 export default productRouter;

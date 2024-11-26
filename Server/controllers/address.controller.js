@@ -1,6 +1,5 @@
 import addressModel from "../models/address.model.js";
 import userModel from "../models/user.model.js";
-import mongoose from "mongoose";
 
 export async function addAddressController(req, res) {
   try {
