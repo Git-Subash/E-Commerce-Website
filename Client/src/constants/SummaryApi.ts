@@ -73,10 +73,6 @@ export const SummaryApi = {
     url: "/api/category/create",
     method: "post",
   },
-  get_Category: {
-    url: "/api/category/get",
-    method: "get",
-  },
   update_Category: {
     url: "/api/category/update",
     method: "put",
@@ -92,10 +88,6 @@ export const SummaryApi = {
   add_SubCategory: {
     url: "/api/sub-category/create",
     method: "post",
-  },
-  get_SubCategory: {
-    url: "/api/sub-category/get",
-    method: "get",
   },
   filter_SubCategory: {
     url: "/api/sub-category/filter",
@@ -124,5 +116,13 @@ export const SummaryApi = {
   delete_product: {
     url: "/api/product/delete",
     method: "delete",
+  },
+  add_cart: {
+    url: "api/cart/add",
+    method: "post",
+  },
+  get_cart: {
+    url: "api/cart/get",
+    method: "get",
   },
 };

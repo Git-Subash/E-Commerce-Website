@@ -1,10 +1,11 @@
+import { useCart } from "@/hooks/useCart";
+import { RootState } from "@/store/store";
 import { ArrowRight, Plus } from "lucide-react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store/store";
 
 export default function BestSellers() {
   const productList = useSelector(
@@ -13,6 +14,10 @@ export default function BestSellers() {
   const categoryList = useSelector(
     (state: RootState) => state.product.categoryList,
   );
+  const { addToCart } = useCart();
+
+  // const CartList = useSelector((state: RootState) => state.product.cartList);
+  // const [cartState, setCartState] = React.useState<Record<string, boolean>>({});
 
   const categoryLookup = new Map(
     categoryList.map((category: { _id: string; name: string }) => [
@@ -22,6 +27,7 @@ export default function BestSellers() {
   );
 
   const products = productList.map((product: any) => ({
+    _id: product._id,
     name: product.name,
     to: "/",
     image: product.image[0] || "default.jpg",
@@ -29,6 +35,15 @@ export default function BestSellers() {
     price: product.price,
     salePrice: product.salePrice,
   }));
+
+  async function AddtoCart(id: string) {
+    try {
+      await addToCart(id);
+    } catch (error) {
+      console.log("error accured in addToCart action");
+    }
+  }
+
   return (
     <MaxWidthWrapper className="my-10 flex flex-col gap-4">
       <div className="flex w-full items-center justify-between">
@@ -52,12 +67,20 @@ export default function BestSellers() {
               </div>
               <div className="mt-4 flex w-full items-center justify-between">
                 <p className="flex flex-col gap-1.5">
-                  ${_item.price}{" "}
+                  ${_item.price}
                   <del className="text-secondary/50">${_item.salePrice}</del>
                 </p>
-                <Button size="sm">
-                  <Plus /> Add
+
+                <Button size="sm" onClick={() => AddtoCart(_item._id)}>
+                  Add
+                  <Plus />
                 </Button>
+                {/* <div className="flex items-center">
+                    <Minus className="h-7 w-7 p-2" />
+
+                    <p className="border px-3 py-1 text-sm font-medium">1</p>
+                    <Plus className="h-7 w-7 p-2" />
+                  </div> */}
               </div>
             </Card>
           </Link>

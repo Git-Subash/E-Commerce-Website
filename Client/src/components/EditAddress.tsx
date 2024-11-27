@@ -2,6 +2,7 @@ import DialogForm from "@/components/DialogForm";
 import { SummaryApi } from "@/constants/SummaryApi";
 import { useGlobleContext } from "@/context/GlobleContextProvider";
 import { useToast } from "@/hooks/use-toast";
+import { useAddress } from "@/hooks/useAddress";
 import Axios from "@/lib/Axios";
 import { ReactNode } from "react";
 import { UseFormReturn } from "react-hook-form";
@@ -51,8 +52,7 @@ export default function EditAddress({
   data: EditAddressProp;
   button: ReactNode;
 }) {
-  const { fetchAddress } = useGlobleContext();
-  const { toast } = useToast();
+  const { editAddressDetails } = useAddress();
 
   async function handleSubmit(
     data: z.infer<typeof addressSchema>,
@@ -60,37 +60,11 @@ export default function EditAddress({
     closeDialog: () => void,
   ) {
     try {
-      const response = await Axios({
-        ...SummaryApi.update_address,
-        data: {
-          _id: data._id,
-          ...data,
-        },
-      });
-
-      const { data: responseData } = response;
-
-      if (responseData.data) {
-        toast({
-          variant: "default",
-          title: "Address Updated  uccessful ",
-          description:
-            "Your address has been added to the account successfully.",
-        });
-        window.location.reload();
-        closeDialog();
-        fetchAddress();
-      }
+      await editAddressDetails(data, closeDialog);
     } catch (error) {
       form.setError("address_title", {
         type: "manual",
         message: "Submission failed.",
-      });
-      toast({
-        variant: "destructive",
-        title: "Update Failed",
-        description:
-          "There was an error updating your profile. Please try again.",
       });
     }
   }

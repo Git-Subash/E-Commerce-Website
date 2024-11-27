@@ -7,16 +7,13 @@ import {
   DialogTrigger,
 } from "./ui/dialog";
 
-import { SummaryApi } from "@/constants/SummaryApi";
-import { useToast } from "@/hooks/use-toast";
-import Axios from "@/lib/Axios";
-import fetchUserDetails from "@/lib/fetchUserDetails";
+import { imageSchema } from "@/constants/schema";
+import { useUser } from "@/hooks/useUser";
 import { RootState } from "@/store/store";
-import { setUserDetails } from "@/store/userSlice";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader, UserRoundPen } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { z } from "zod";
 import { Button } from "./ui/button";
 import {
@@ -29,29 +26,12 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 
-const ACCEPTED_IMAGE_TYPES = [
-  "image/jpeg",
-  "image/jpg",
-  "image/png",
-  "image/webp",
-];
-
-const imageSchema = z.object({
-  image: z
-
-    .custom<FileList>((val) => val instanceof FileList, "Required")
-    .refine(
-      (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-      ".jpg, .jpeg, .png and .webp files are accepted.",
-    )
-    .refine((files) => files.length > 0, `Required`),
-});
 export default function AddProfileImage() {
   const user = useSelector((state: RootState) => state.user);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
-  const dispatch = useDispatch();
-  const { toast } = useToast();
-  //react-form-hook
+
+  const { uploadUserProfile } = useUser();
+
   const form = useForm<z.infer<typeof imageSchema>>({
     resolver: zodResolver(imageSchema),
     defaultValues: {
@@ -67,42 +47,10 @@ export default function AddProfileImage() {
   };
 
   async function onSubmit(data: z.infer<typeof imageSchema>) {
-    const image = new FormData();
-
-    image.append("image", data.image[0]);
-
     try {
-      const response = await Axios({
-        ...SummaryApi.upload_avatar,
-        data: image,
-      });
-
-      if (response.data) {
-        const userDetails = await fetchUserDetails();
-        if (userDetails?.data.avatar) {
-          dispatch(setUserDetails({ avatar: userDetails.data.avatar }));
-
-          // window.location.reload();
-          console.log(
-            "User details fetched successfully:",
-            userDetails.data.avatar,
-          );
-        } else {
-          console.error("Error fetching user details:");
-        }
-        toast({
-          title: "Pofile Image Uploaded",
-          description: "Your Profile has been created successfully.",
-        });
-      }
-      handleClose();
+      uploadUserProfile(data, handleClose);
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Update Failed",
-        description:
-          "There was an error updating your profile. Please try again.",
-      });
+      console.error("Error in form submition!!");
     }
   }
 

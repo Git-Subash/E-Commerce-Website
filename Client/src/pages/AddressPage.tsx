@@ -2,76 +2,15 @@ import AddAddress from "@/components/AddAddress";
 import EditAddress from "@/components/EditAddress";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { SummaryApi } from "@/constants/SummaryApi";
-import { useGlobleContext } from "@/context/GlobleContextProvider";
-import { useToast } from "@/hooks/use-toast";
-import Axios from "@/lib/Axios";
-import { deleteAddress, updateAddressStatus } from "@/store/addressSlice";
+import { useAddress } from "@/hooks/useAddress";
 import { RootState } from "@/store/store";
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 export default function AddressPage() {
   const addressList = useSelector(
     (state: RootState) => state.address.addressList,
   );
-  const { fetchAddress } = useGlobleContext();
-  const { toast } = useToast();
-  const dispatch = useDispatch();
-
-  //updating stauts
-  const handleAddressStatus = async (id: any) => {
-    try {
-      const selectedAddress = addressList.find((item) => item._id === id);
-      if (!selectedAddress || selectedAddress.status) return;
-
-      const response = await Axios({
-        ...SummaryApi.update_address_status,
-        data: {
-          _id: id,
-          status: true,
-        },
-      });
-      if (response.data.success) {
-        // Update Redux: Set the clicked address's status to true and all others to false
-        dispatch(
-          updateAddressStatus({
-            _id: id,
-            status: true,
-          }),
-        );
-        console.log("status updated success");
-        if (fetchAddress) {
-          fetchAddress();
-        }
-      }
-    } catch (error) {}
-  };
-  //delete address
-  const handleDeleteAddress = async (id: any, event: React.MouseEvent) => {
-    event.stopPropagation();
-    try {
-      const response = await Axios({
-        ...SummaryApi.delete_address,
-        data: {
-          _id: id,
-        },
-      });
-      if (response.data.success) {
-        console.log("data:", response.data);
-        dispatch(deleteAddress());
-        toast({
-          variant: "default",
-          title: "Address Removed successful ",
-          description:
-            "Your address has been added to the account successfully.",
-        });
-        if (fetchAddress) {
-          fetchAddress();
-        }
-      }
-    } catch (error) {}
-  };
+  const { handleAddressStatus, handleDeleteAddress } = useAddress();
 
   return (
     <div className="relative">

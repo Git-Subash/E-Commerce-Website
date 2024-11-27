@@ -53,14 +53,12 @@ export default function Products() {
     ]),
   );
   const selectedProduct = productList.find(
-    (product: { _id: string; categoryId: string; sub_categoryId: string }) => {
-      return (
-        product._id === selectedId &&
-        categoryLookup.has(product.categoryId) &&
-        subCategoryLookup.has(product.sub_categoryId)
-      );
-    },
+    (product: { _id: string; categoryId: string; sub_categoryId: string }) =>
+      product._id === selectedId &&
+      categoryLookup.has(product.categoryId) &&
+      subCategoryLookup.has(product.sub_categoryId),
   );
+
   const productsData = productList.map((product: any) => ({
     id: product._id,
     image: product.image[0],
@@ -71,12 +69,8 @@ export default function Products() {
     price: product.price,
     createdAt: new Date().toISOString().split("T")[0],
   }));
-
-  React.useEffect(() => {
-    filterProduct();
-  }, [search, status]);
-
   const [filteredData, setFilteredData] = React.useState(productsData);
+
   async function filterProduct() {
     try {
       const response = await Axios({
@@ -109,11 +103,6 @@ export default function Products() {
       }
     } catch (error) {}
   }
-
-  React.useEffect(() => {
-    setFilteredData(productsData);
-  }, [productsData]);
-
   async function handleDeleteProduct(id: string) {
     try {
       const response = await Axios({
@@ -138,6 +127,14 @@ export default function Products() {
       });
     }
   }
+
+  React.useEffect(() => {
+    filterProduct();
+  }, [search, status]);
+
+  React.useEffect(() => {
+    setFilteredData(productsData);
+  }, [productsData]);
 
   let isAddProduct =
     location.pathname == "/dashboard-page/products/add-product";

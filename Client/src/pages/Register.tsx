@@ -8,40 +8,18 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { SummaryApi } from "@/constants/SummaryApi";
-import { useToast } from "@/hooks/use-toast";
-import Axios from "@/lib/Axios";
+import { RegisterSchema } from "@/constants/schema";
+import { useUser } from "@/hooks/useUser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 
-const FormSchema = z
-  .object({
-    name: z.string().min(2, {
-      message: "Name must be at least 2 characters.",
-    }),
-    email: z
-      .string()
-      .min(1, { message: "This field has to be filled." })
-      .email("This is not a valid Email."),
-    password: z
-      .string()
-      .min(8, { message: "Password must be at least 8 characters long." }),
-    confirmPassword: z
-      .string()
-      .max(8, { message: "This field has to be filled." }),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirm"],
-  });
-
 export default function Register() {
-  const { toast } = useToast();
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const { registerUser } = useUser();
+  const form = useForm<z.infer<typeof RegisterSchema>>({
+    resolver: zodResolver(RegisterSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -49,28 +27,13 @@ export default function Register() {
       confirmPassword: "",
     },
   });
-  async function onSubmit(data: z.infer<typeof FormSchema>) {
+  async function onSubmit(data: z.infer<typeof RegisterSchema>) {
     try {
-      const response = await Axios({
-        ...SummaryApi.register,
-        data: data,
-      });
+      await registerUser(data);
       form.reset();
-
-      if (response) {
-        return toast({
-          variant: "default",
-          title: "Registration Successful ",
-          description:
-            "Your account has been created successfully. Welcome aboard!",
-        });
-      }
+      console.log("data submited:", data);
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Something went Wrong",
-        description: "We couldn't able to sign. Please try again.",
-      });
+      console.error("Error submitting form:", error);
     }
   }
   return (

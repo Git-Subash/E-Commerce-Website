@@ -1,41 +1,13 @@
 import DialogForm from "@/components/DialogForm";
 import { Button } from "@/components/ui/button";
-import { SummaryApi } from "@/constants/SummaryApi";
-import { useGlobleContext } from "@/context/GlobleContextProvider";
-import { useToast } from "@/hooks/use-toast";
-import Axios from "@/lib/Axios";
+import { addressSchema } from "@/constants/schema";
+import { useAddress } from "@/hooks/useAddress";
 import { Plus } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 
-const addressSchema = z.object({
-  address_title: z.string().min(2, {
-    message: "Name must be at least 2 characters long.",
-  }),
-
-  address_line: z.string().min(1, { message: "Address is required." }),
-  city: z
-    .string()
-    .min(2, { message: "City must be at least 2 characters long." }),
-  state: z
-    .string()
-    .min(2, { message: "statr must be at least 2 characters long." }),
-  pincode: z
-    .string()
-    .length(6, { message: "Pincode must be exactly 6 digits long." }) // Assumes pincode is a 6-digit number.
-    .regex(/^\d+$/, { message: "Pincode must contain only numbers." }),
-  country: z
-    .string()
-    .min(2, { message: "Country must be at least 2 characters long." }),
-  mobile: z
-    .string()
-    .length(10, { message: "Mobile number must be exactly 10 digits long." })
-    .regex(/^\d+$/, { message: "Mobile number must contain only numbers." }),
-});
-
 export default function AddAddress() {
-  const { fetchAddress } = useGlobleContext();
-  const { toast } = useToast();
+  const { addAddressDetails } = useAddress();
 
   async function handleSubmit(
     data: z.infer<typeof addressSchema>,
@@ -43,35 +15,11 @@ export default function AddAddress() {
     closeDialog: () => void,
   ) {
     try {
-      const response = await Axios({
-        ...SummaryApi.add_address,
-        data: {
-          ...data,
-        },
-      });
-
-      const { data: responseData } = response;
-
-      if (responseData.data) {
-        toast({
-          variant: "default",
-          title: "Address Added uccessful ",
-          description:
-            "Your address has been added to the account successfully.",
-        });
-        closeDialog();
-        fetchAddress();
-      }
+      await addAddressDetails(data, closeDialog);
     } catch (error) {
       form.setError("address_title", {
         type: "manual",
         message: "Submission failed.",
-      });
-      toast({
-        variant: "destructive",
-        title: "Update Failed",
-        description:
-          "There was an error updating your profile. Please try again.",
       });
     }
   }

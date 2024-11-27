@@ -167,19 +167,7 @@ export default function SubCategory() {
         )}
       </div>
       {isAddCategory && !isEditCategory ? (
-        <SubCategoryForm
-
-        // onSubmit={async (data) => {
-        //   const response = await Axios({
-        //     ...SummaryApi.add_SubCategory,
-        //     data: {
-        //       categoryId: data.category,
-        //       name: data.name,
-        //     },
-        //   });
-        //   console.log("sub-category: ", response.data);
-        // }}
-        />
+        <SubCategoryForm />
       ) : !isAddCategory && isEditCategory ? (
         <SubCategoryForm
           id={selectedId}
@@ -188,16 +176,6 @@ export default function SubCategory() {
             name: selectedSubCategory?.name || "",
             category: selectedSubCategory?.categoryId || "",
           }}
-          // onSubmit={async (data) => {
-          //   await Axios({
-          //     ...SummaryApi.update_SubCategory,
-          //     data: {
-          //       _id: selectedId,
-          //       categoryId: data.category,
-          //       name: data.name,
-          //     },
-          //   });
-          // }}
         />
       ) : (
         <Card className="my-10">

@@ -26,17 +26,24 @@ interface Products {
   discount: number;
   description: string;
 }
+interface Cart {
+  _id: string;
+  productId: string;
+  userId: string;
+}
 
 interface productSlice {
   categoryList: Array<Category>;
   subcategoryList: Array<SubCategoryProps>;
   productList: Array<Products>;
+  cartList: Array<Cart>;
 }
 
 const initialState: productSlice = {
   categoryList: [],
   subcategoryList: [],
   productList: [],
+  cartList: [],
 };
 
 export const productSlice = createSlice({
@@ -52,9 +59,13 @@ export const productSlice = createSlice({
     setProduct: (state, action) => {
       state.productList = [...action.payload];
     },
+    setCart: (state, action) => {
+      state.cartList = [...action.payload];
+    },
   },
 });
 
-export const { setCategory, setSubCategory, setProduct } = productSlice.actions;
+export const { setCategory, setSubCategory, setProduct, setCart } =
+  productSlice.actions;
 
 export default productSlice.reducer;

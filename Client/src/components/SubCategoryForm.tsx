@@ -1,10 +1,10 @@
-import { useToast } from "@/hooks/use-toast";
+import { subCategorySchema } from "@/constants/schema";
+import { useProduct } from "@/hooks/useProduct";
 import { RootState } from "@/store/store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
@@ -24,9 +24,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { subCategorySchema } from "@/constants/schema";
-import Axios from "@/lib/Axios";
-import { SummaryApi } from "@/constants/SummaryApi";
 
 interface SubCategoryFormProps {
   id?: string;
@@ -40,8 +37,10 @@ export default function SubCategoryForm({
   initialData,
   id,
 }: SubCategoryFormProps) {
-  const navigate = useNavigate();
-  const { toast } = useToast();
+  const { handleSubCategory } = useProduct();
+  const categoryList = useSelector(
+    (state: RootState) => state.product.categoryList,
+  );
   const form = useForm<z.infer<typeof subCategorySchema>>({
     resolver: zodResolver(subCategorySchema),
     defaultValues: initialData
@@ -56,9 +55,6 @@ export default function SubCategoryForm({
           role: "add",
         },
   });
-  const categoryList = useSelector(
-    (state: RootState) => state.product.categoryList,
-  );
 
   // Use categoryList directly for productsData mapping
   const categoryTypes = Array.isArray(categoryList)
@@ -70,42 +66,10 @@ export default function SubCategoryForm({
 
   async function handleSubmit(data: z.infer<typeof subCategorySchema>) {
     try {
-      let response;
-      if (initialData) {
-        response = await Axios({
-          ...SummaryApi.update_SubCategory,
-          data: {
-            _id: id,
-            categoryId: data.category,
-            name: data.name,
-          },
-        });
-      } else {
-        response = await Axios({
-          ...SummaryApi.add_SubCategory,
-          data: {
-            categoryId: data.category,
-            name: data.name,
-          },
-        });
-      }
-      console.log(" Aub-category response Data", response);
+      handleSubCategory(data, initialData, id);
       form.reset();
-      navigate("/dashboard-page/sub-category");
-      window.location.reload();
-      toast({
-        title:
-          initialData?.role === "add"
-            ? "Sub-Category Added"
-            : "Sub-Category Updated",
-        description: "The category has been successfully saved.",
-      });
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to save the category. Please try again.",
-      });
+      console.error("error in form submition ");
     }
   }
   return (
@@ -167,7 +131,9 @@ export default function SubCategoryForm({
             type="submit"
             className="w-full tracking-wide"
           >
-            Add Category
+            {initialData?.role !== "edit"
+              ? "Add Sub_Category"
+              : "Update Sub_Category"}
             {form.formState.isSubmitting && (
               <Loader className="ml-2 h-4 w-4 animate-spin" />
             )}

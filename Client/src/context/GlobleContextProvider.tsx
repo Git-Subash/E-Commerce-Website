@@ -1,6 +1,10 @@
+import { Button } from "@/components/ui/button";
+import { ToastAction } from "@/components/ui/toast";
 import { SummaryApi } from "@/constants/SummaryApi";
+import { useToast } from "@/hooks/use-toast";
 import Axios from "@/lib/Axios";
 import { handleAddAddress } from "@/store/addressSlice";
+import { setCart } from "@/store/ProductSlice";
 import { RootState } from "@/store/store";
 import React, { ReactNode } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,8 +15,8 @@ type GlobleContextType = {
 };
 
 // Creating the context
-export const GlobleContext = React.createContext<GlobleContextType | null>(
-  null,
+export const GlobleContext = React.createContext<GlobleContextType | undefined>(
+  undefined,
 );
 
 // Custom hook to use the context
@@ -27,6 +31,28 @@ export const useGlobleContext = () => {
 const GlobleProvider = ({ children }: { children: ReactNode }) => {
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user);
+  const { toast } = useToast();
+
+  const addToCart = (product: any) => {
+    if (user) {
+      const CartItem = [...product];
+      dispatch(setCart(CartItem));
+      toast({
+        variant: "default",
+        description: "Product Added to cart successfully!",
+      });
+    } else {
+      toast({
+        variant: "default",
+        description: "login to add products to cart",
+        action: (
+          <ToastAction altText="Goto schedule to undo">
+            <Button> Login </Button>
+          </ToastAction>
+        ),
+      });
+    }
+  };
 
   const fetchAddress = async () => {
     try {
@@ -42,15 +68,28 @@ const GlobleProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error fetching address:", error);
     }
   };
+  // const fetchCartItem = async () => {
+  //   try {
+  //     const response = await Axios({
+  //       ...SummaryApi.get_cart,
+  //     });
+  //     const { data: responseData } = response;
+  //     if (responseData) {
+  //     }
+  //   } catch (error) {}
+  // };
 
   React.useEffect(() => {
     fetchAddress();
   }, [user]);
 
+  const value = {
+    fetchAddress,
+    addToCart,
+  };
+
   return (
-    <GlobleContext.Provider value={{ fetchAddress }}>
-      {children}
-    </GlobleContext.Provider>
+    <GlobleContext.Provider value={value}>{children}</GlobleContext.Provider>
   );
 };
 

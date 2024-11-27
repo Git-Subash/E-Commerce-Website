@@ -1,9 +1,12 @@
-import { useToast } from "@/hooks/use-toast";
+import { categorySchema } from "@/constants/schema";
+import { useProduct } from "@/hooks/useProduct";
+import uploadImage from "@/lib/uploadImage";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader } from "lucide-react";
+import React from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import { z } from "zod";
+import DropzoneImageField from "./DropzoneImageField";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
 import {
@@ -16,12 +19,6 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
-import { categorySchema } from "@/constants/schema";
-import DropzoneImageField from "./DropzoneImageField";
-import { SummaryApi } from "@/constants/SummaryApi";
-import Axios from "@/lib/Axios";
-import uploadImage from "@/lib/uploadImage";
-import React from "react";
 
 interface CategoryFormProps {
   id?: string;
@@ -34,8 +31,7 @@ interface CategoryFormProps {
 }
 
 export default function CategoryForm({ initialData, id }: CategoryFormProps) {
-  const { toast } = useToast();
-  const navigate = useNavigate();
+  const { handleCategory } = useProduct();
   const form = useForm<z.infer<typeof categorySchema>>({
     resolver: zodResolver(categorySchema),
     defaultValues: initialData
@@ -52,38 +48,13 @@ export default function CategoryForm({ initialData, id }: CategoryFormProps) {
           role: "add",
         },
   });
-  // console.log(form.formState.errors);
+
   async function handleSubmit(data: z.infer<typeof categorySchema>) {
     try {
-      let response;
-
-      if (initialData) {
-        response = await Axios({
-          ...SummaryApi.update_Category,
-          data: {
-            _id: id,
-            ...data,
-          },
-        });
-      } else {
-        response = await Axios({ ...SummaryApi.add_Category, data: data });
-      }
-
-      console.log("response data: ", response);
+      await handleCategory(data, initialData, id);
       form.reset();
-      navigate("/dashboard-page/category");
-      window.location.reload();
-      toast({
-        title:
-          initialData?.role === "edit" ? "Category Update" : "Category Added",
-        description: "The category has been successfully saved.",
-      });
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to save the category. Please try again.",
-      });
+      console.error("error in form submition");
     }
   }
   const [imageUrls, setImageUrls] = React.useState<string | string[]>("");

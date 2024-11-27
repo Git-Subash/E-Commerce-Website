@@ -1,4 +1,3 @@
-import useMobile from "@/hooks/useMobile";
 import { Search } from "lucide-react";
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -7,7 +6,6 @@ import { TypeAnimation } from "react-type-animation";
 export default function SearchInput() {
   const navigate = useNavigate();
   const location = useLocation();
-  const isMobile = useMobile();
   const [isSearchPage, setIsSearchPage] = React.useState(false);
   const params = useLocation();
   const searchText = params.search.slice(3);
@@ -29,18 +27,12 @@ export default function SearchInput() {
   return (
     <div className="mt-45 focus-within:border-primary-200 group flex h-11 w-full min-w-[300px] items-center overflow-hidden rounded-lg border bg-slate-50 text-neutral-500 lg:h-12">
       <div>
-        {isMobile && isSearchPage ? (
-          <Link
-            to="/"
-            className="group-focus-within:text-primary-200 m-1 flex h-full items-center justify-center rounded-full bg-white p-2 shadow-md"
-          >
-            <Search size={20} />
-          </Link>
-        ) : (
-          <button className="group-focus-within:text-primary-200 flex h-full items-center justify-center p-3">
-            <Search size={22} />
-          </button>
-        )}
+        <Link
+          to="/"
+          className="group-focus-within:text-primary-200 s p- bg-transparent2 m-1 flex h-full items-center justify-center rounded-full p-2"
+        >
+          <Search size={20} />
+        </Link>
       </div>
       <div className="h-full w-full">
         {!isSearchPage ? (

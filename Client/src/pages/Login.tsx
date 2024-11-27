@@ -9,69 +9,30 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { SummaryApi } from "@/constants/SummaryApi";
-import { useToast } from "@/hooks/use-toast";
-import Axios from "@/lib/Axios";
-import fetchUserDetails from "@/lib/fetchUserDetails";
-import { setUserDetails } from "@/store/userSlice";
+import { loginSchema } from "@/constants/schema";
+import { useUser } from "@/hooks/useUser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { z } from "zod";
 
-const FormSchema = z.object({
-  email: z
-    .string()
-    .min(1, { message: "This field has to be filled." })
-    .email("This is not a valid Email."),
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters long." }),
-});
-
 export default function Login() {
-  const { toast } = useToast();
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+  const { loginUser } = useUser();
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
-  async function onSubmit(data: z.infer<typeof FormSchema>) {
+  async function onSubmit(data: z.infer<typeof loginSchema>) {
     try {
-      const response = await Axios({
-        ...SummaryApi.login,
-        data: data,
-      });
-
-      if (response.data) {
-        form.reset();
-        navigate("/");
-        //adding the userdetails to the persist
-        const userDetails = await fetchUserDetails();
-        if (userDetails?.data) {
-          dispatch(setUserDetails(userDetails.data));
-          console.log("User details fetched successfully:");
-        } else {
-          console.error("Error fetching user details:");
-        }
-        toast({
-          variant: "default",
-          title: "Login successful ",
-          description: "Welcome back! You have successfully logged in.",
-        });
-      }
+      await loginUser(data);
+      form.reset();
+      console.log("data submited:", data);
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Something went Wrong",
-        description: "We couldn't able to sign. Please try again.",
-      });
+      console.error("Error submitting form:", error);
     }
   }
   return (

@@ -61,7 +61,6 @@ export default function CartDrawer({ button }: { button: ReactNode }) {
     if (!isLoggedIn) {
       toast({
         variant: "destructive",
-        title: "Login to Access Cart",
         description: "We couldn't able to sign. Please try again.",
       });
     }

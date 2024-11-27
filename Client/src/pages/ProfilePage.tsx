@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { SummaryApi } from "@/constants/SummaryApi";
 import { useToast } from "@/hooks/use-toast";
+import { useUser } from "@/hooks/useUser";
 import Axios from "@/lib/Axios";
-import fetchUserDetails from "@/lib/fetchUserDetails";
 import { RootState } from "@/store/store";
 import { setUserDetails } from "@/store/userSlice";
 import { Pencil } from "lucide-react";
@@ -34,6 +34,7 @@ export default function ProfilePage() {
   const user = useSelector((state: RootState) => state?.user);
   const { toast } = useToast();
   const dispatch = useDispatch();
+  const { fetchUserDetails } = useUser();
   const addressList = useSelector(
     (state: RootState) => state.address.addressList,
   );

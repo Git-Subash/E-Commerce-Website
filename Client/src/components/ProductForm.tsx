@@ -9,15 +9,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ProductSchema } from "@/constants/schema";
-import { SummaryApi } from "@/constants/SummaryApi";
-import { useToast } from "@/hooks/use-toast";
-import Axios from "@/lib/Axios";
+import { useProduct } from "@/hooks/useProduct";
+import uploadImage from "@/lib/uploadImage";
 import { RootState } from "@/store/store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader } from "lucide-react";
+import React from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import DropzoneImageField from "./DropzoneImageField";
 import { Card, CardContent } from "./ui/card";
@@ -30,8 +29,6 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Textarea } from "./ui/textarea";
-import uploadImage from "@/lib/uploadImage";
-import React from "react";
 
 interface ProductProps {
   initialData?: {
@@ -42,9 +39,9 @@ interface ProductProps {
     unit: string;
     stock: number;
     status: boolean;
-    price: number;
-    salePrice: number;
-    discount: number;
+    price: number | undefined;
+    salePrice: number | undefined;
+    discount: number | undefined;
     description: string;
     role: "edit" | "add";
   };
@@ -52,6 +49,14 @@ interface ProductProps {
 }
 
 export default function ProductForm({ initialData, id }: ProductProps) {
+  const [isImageLoading, setImageLoading] = React.useState<boolean>(false);
+  const { handleProduct } = useProduct();
+  const categoryList = useSelector(
+    (state: RootState) => state.product.categoryList,
+  );
+  const SubcategoryList = useSelector(
+    (state: RootState) => state.product.subcategoryList,
+  );
   const form = useForm<z.infer<typeof ProductSchema>>({
     resolver: zodResolver(ProductSchema),
     defaultValues: initialData
@@ -77,21 +82,13 @@ export default function ProductForm({ initialData, id }: ProductProps) {
           status: false,
           categoryId: "",
           sub_categoryId: "",
-          discount: 0,
-          price: 0,
-          salePrice: 0,
-          stock: 0,
+          discount: undefined,
+          price: undefined,
+          salePrice: undefined,
+          stock: undefined,
           role: "add",
         },
   });
-  const { toast } = useToast();
-  const navigate = useNavigate();
-  const categoryList = useSelector(
-    (state: RootState) => state.product.categoryList,
-  );
-  const SubcategoryList = useSelector(
-    (state: RootState) => state.product.subcategoryList,
-  );
 
   const categoryTypes = Array.isArray(categoryList)
     ? categoryList.map((category: any) => ({
@@ -105,7 +102,6 @@ export default function ProductForm({ initialData, id }: ProductProps) {
         label: subCategory.name || "N/A",
       }))
     : [];
-  const [isImageLoading, setImageLoading] = React.useState<boolean>(false);
 
   const handleImageUpload = async (
     acceptedFiles: File[],
@@ -114,7 +110,6 @@ export default function ProductForm({ initialData, id }: ProductProps) {
   ) => {
     try {
       setImageLoading(true); // Show loading state while uploading images
-
       // Upload all the files
       const uploadedUrls = await Promise.all(
         acceptedFiles.map(async (file: File) => {
@@ -136,40 +131,11 @@ export default function ProductForm({ initialData, id }: ProductProps) {
   };
 
   async function onSubmit(data: z.infer<typeof ProductSchema>) {
-    //handling add and  update
     try {
-      let response;
-      //handle update product
-      if (initialData) {
-        response = await Axios({
-          ...SummaryApi.update_product, // update  product link
-          data: {
-            _id: id,
-            ...data,
-          },
-        });
-      } else {
-        //handle app-product
-        response = await Axios({
-          ...SummaryApi.add_product, //add product link
-          data: data,
-        });
-      }
-      console.log("response data: ", response);
+      handleProduct(data, initialData, id);
       form.reset();
-      navigate("/dashboard-page/products");
-      window.location.reload();
-      toast({
-        title:
-          initialData?.role === "edit" ? "Category Update" : "Category Added",
-        description: "The category has been successfully saved.",
-      });
     } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to save the category. Please try again.",
-      });
+      console.log("error in form submition");
     }
   }
 
@@ -201,7 +167,10 @@ export default function ProductForm({ initialData, id }: ProductProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Product Category</FormLabel>
-                    <Select onValueChange={field.onChange}>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Product Category" />
@@ -223,7 +192,7 @@ export default function ProductForm({ initialData, id }: ProductProps) {
                 control={form.control}
                 name="unit"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem defaultValue={field.value}>
                     <FormLabel>Unit</FormLabel>
                     <FormControl>
                       <Input placeholder="Product Name" {...field} />
@@ -238,7 +207,10 @@ export default function ProductForm({ initialData, id }: ProductProps) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Product Sub_Category</FormLabel>
-                    <Select onValueChange={field.onChange}>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Product sub-category" />
@@ -302,7 +274,7 @@ export default function ProductForm({ initialData, id }: ProductProps) {
                     control={form.control}
                     name="price"
                     render={({ field }) => (
-                      <FormItem className="my-5">
+                      <FormItem defaultValue={field.value} className="my-5">
                         <FormLabel>Regular Price</FormLabel>
                         <FormControl>
                           <Input
