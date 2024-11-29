@@ -57,11 +57,12 @@ export default function CartDrawer({ button }: { button: ReactNode }) {
       setQuantity((prev) => prev - 1);
     }
   };
+  const cartList = useSelector((state: RootState) => state.product.cartList);
   const handleToast = () => {
     if (!isLoggedIn) {
       toast({
         variant: "destructive",
-        description: "We couldn't able to sign. Please try again.",
+        description: "We couldn't able to access cart. Please Sign In.",
       });
     }
   };
@@ -73,7 +74,7 @@ export default function CartDrawer({ button }: { button: ReactNode }) {
       }
     >
       <DrawerTrigger onClick={handleToast}>{button}</DrawerTrigger>
-      <DrawerContent className="h-4/5 border-none">
+      <DrawerContent className="h-2/1 border-none">
         <Card className="w-full border-none !p-0 md:mx-auto md:w-4/5">
           <CardHeader className="mb-auto flex justify-between border-b">
             <CardTitle className="flex items-center justify-between">

@@ -25,7 +25,7 @@ export default function CategoriesSection() {
 
   const categories = categoryylist.map((category) => ({
     name: category.name,
-    to: "/",
+    to: `/shop/${category._id}`,
     image: category.image,
   }));
 

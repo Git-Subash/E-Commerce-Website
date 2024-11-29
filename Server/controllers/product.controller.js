@@ -158,3 +158,32 @@ export async function filterProduct(req, res) {
     });
   }
 }
+
+export async function filterByCategoryController(req, res) {
+  try {
+    const { id } = req.query;
+
+    if (!id) {
+      return res.status(400).json({
+        message: "Category ID is required.",
+        success: false,
+        error: true,
+      });
+    }
+
+    const products = await productModel.find({
+      categoryId: id,
+    });
+    return res.status(200).json({
+      error: false,
+      success: true,
+      data: products,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || error,
+      success: false,
+      error: true,
+    });
+  }
+}

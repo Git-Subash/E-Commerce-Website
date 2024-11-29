@@ -29,7 +29,6 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Textarea } from "./ui/textarea";
-
 interface ProductProps {
   initialData?: {
     name: string;
@@ -37,8 +36,8 @@ interface ProductProps {
     categoryId: string;
     sub_categoryId: string;
     unit: string;
-    stock: number;
     status: boolean;
+    stock: number | undefined;
     price: number | undefined;
     salePrice: number | undefined;
     discount: number | undefined;
@@ -47,7 +46,6 @@ interface ProductProps {
   };
   id?: string;
 }
-
 export default function ProductForm({ initialData, id }: ProductProps) {
   const [isImageLoading, setImageLoading] = React.useState<boolean>(false);
   const { handleProduct } = useProduct();
@@ -117,19 +115,16 @@ export default function ProductForm({ initialData, id }: ProductProps) {
           return response.data.data.url; // Get URL of uploaded image
         }),
       );
-
       // Sync with the form state (pass the array of URLs to form)
       const currentImages = value || [];
       const updatedImages = [...currentImages, ...uploadedUrls];
       onChange(updatedImages);
-
       setImageLoading(false); // Hide loading after the images are uploaded
     } catch (error) {
       console.error("Image upload failed", error);
       setImageLoading(false); // Hide loading if there's an error
     }
   };
-
   async function onSubmit(data: z.infer<typeof ProductSchema>) {
     try {
       handleProduct(data, initialData, id);
@@ -138,7 +133,6 @@ export default function ProductForm({ initialData, id }: ProductProps) {
       console.log("error in form submition");
     }
   }
-
   return (
     <Card className="mx-6 mb-10 p-6">
       <CardContent>
@@ -229,7 +223,6 @@ export default function ProductForm({ initialData, id }: ProductProps) {
                 )}
               />
             </Card>
-
             <h1 className="mb-4 text-xl font-semibold text-secondary/70">
               Product Image
             </h1>
@@ -240,7 +233,6 @@ export default function ProductForm({ initialData, id }: ProductProps) {
               handleImageUpload={handleImageUpload}
               multiple={true}
             />
-
             <h1 className="my-4 text-xl font-semibold text-secondary/70">
               Product Descriptions
             </h1>
@@ -256,12 +248,10 @@ export default function ProductForm({ initialData, id }: ProductProps) {
                       {...field}
                     />
                   </FormControl>
-
                   <FormMessage />
                 </FormItem>
               )}
             />
-
             {/* gird */}
             <Card className="mb-6 grid gap-10 border-none md:grid-cols-2">
               {/* product price card */}
@@ -274,7 +264,7 @@ export default function ProductForm({ initialData, id }: ProductProps) {
                     control={form.control}
                     name="price"
                     render={({ field }) => (
-                      <FormItem defaultValue={field.value} className="my-5">
+                      <FormItem className="my-5">
                         <FormLabel>Regular Price</FormLabel>
                         <FormControl>
                           <Input
@@ -282,6 +272,10 @@ export default function ProductForm({ initialData, id }: ProductProps) {
                             type="number"
                             placeholder="$0.00"
                             {...field}
+                            value={field.value || ""} // Prevent uncontrolled component issues
+                            onChange={(e) =>
+                              field.onChange(e.target.valueAsNumber)
+                            }
                           />
                         </FormControl>
                         <FormMessage />
@@ -300,6 +294,10 @@ export default function ProductForm({ initialData, id }: ProductProps) {
                             type="number"
                             placeholder="$0.00"
                             {...field}
+                            value={field.value || ""} // Prevent uncontrolled component issues
+                            onChange={(e) =>
+                              field.onChange(e.target.valueAsNumber)
+                            }
                           />
                         </FormControl>
                         <FormMessage />
@@ -318,7 +316,7 @@ export default function ProductForm({ initialData, id }: ProductProps) {
                     control={form.control}
                     name="discount"
                     render={({ field }) => (
-                      <FormItem className="my-2">
+                      <FormItem defaultValue={field.value} className="my-2">
                         <FormLabel>Discount</FormLabel>
                         <FormControl>
                           <Input
@@ -326,6 +324,10 @@ export default function ProductForm({ initialData, id }: ProductProps) {
                             type="number"
                             placeholder="$0.00"
                             {...field}
+                            value={field.value || ""} // Prevent uncontrolled component issues
+                            onChange={(e) =>
+                              field.onChange(e.target.valueAsNumber)
+                            }
                           />
                         </FormControl>
                         <FormMessage />
@@ -336,7 +338,7 @@ export default function ProductForm({ initialData, id }: ProductProps) {
                     control={form.control}
                     name="stock"
                     render={({ field }) => (
-                      <FormItem className="my-2">
+                      <FormItem defaultValue={field.value} className="my-2">
                         <FormLabel>Stock</FormLabel>
                         <FormControl>
                           <Input
@@ -344,6 +346,10 @@ export default function ProductForm({ initialData, id }: ProductProps) {
                             type="number"
                             placeholder="$0.00"
                             {...field}
+                            value={field.value || ""} // Prevent uncontrolled component issues
+                            onChange={(e) =>
+                              field.onChange(e.target.valueAsNumber)
+                            }
                           />
                         </FormControl>
                         <FormMessage />
@@ -389,7 +395,6 @@ export default function ProductForm({ initialData, id }: ProductProps) {
                 </CardContent>
               </Card>
             </Card>
-
             <Button
               disabled={form.formState.isSubmitting}
               type="submit"

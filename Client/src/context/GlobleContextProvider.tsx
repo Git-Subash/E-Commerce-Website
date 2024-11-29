@@ -12,6 +12,8 @@ import { useDispatch, useSelector } from "react-redux";
 // Define type for the context
 type GlobleContextType = {
   fetchAddress: () => Promise<void>;
+  fetchCartItem: () => Promise<void>;
+  addToCart: (product: any) => void;
 };
 
 // Creating the context
@@ -54,6 +56,22 @@ const GlobleProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const fetchCartItem = async () => {
+    try {
+      const response = await Axios({
+        ...SummaryApi.get_cart,
+      });
+      const { data: responseData } = response;
+      if (responseData) {
+        dispatch(setCart(responseData.data));
+        console.log(response.data);
+        console.log(responseData);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const fetchAddress = async () => {
     try {
       const response = await Axios({
@@ -68,22 +86,14 @@ const GlobleProvider = ({ children }: { children: ReactNode }) => {
       console.error("Error fetching address:", error);
     }
   };
-  // const fetchCartItem = async () => {
-  //   try {
-  //     const response = await Axios({
-  //       ...SummaryApi.get_cart,
-  //     });
-  //     const { data: responseData } = response;
-  //     if (responseData) {
-  //     }
-  //   } catch (error) {}
-  // };
 
   React.useEffect(() => {
     fetchAddress();
+    fetchCartItem();
   }, [user]);
 
   const value = {
+    fetchCartItem,
     fetchAddress,
     addToCart,
   };

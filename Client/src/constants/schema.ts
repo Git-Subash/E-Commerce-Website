@@ -31,24 +31,24 @@ export const ProductSchema = z.object({
     .min(10, { message: "Description must be at least 10 characters long." }),
 
   stock: z
-    .string()
+    .number()
     .transform((val) => Number(val))
     .refine((val) => !isNaN(val), { message: "Stock must be a valid number." }),
 
   price: z
-    .string()
+    .number()
     .transform((val) => Number(val))
     .refine((val) => !isNaN(val), { message: "Price must be a valid number." }),
 
   salePrice: z
-    .string()
+    .number()
     .transform((val) => Number(val))
     .refine((val) => !isNaN(val), {
       message: "Sale price must be a valid number.",
     }),
 
   discount: z
-    .string()
+    .number()
     .transform((val) => Number(val))
     .refine((val) => !isNaN(val), {
       message: "Discount must be a valid number.",

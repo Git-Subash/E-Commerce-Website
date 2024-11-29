@@ -117,6 +117,10 @@ export const SummaryApi = {
     url: "/api/product/delete",
     method: "delete",
   },
+  filter_product_by_category: {
+    url: "/api/product/filter/category",
+    method: "get",
+  },
   add_cart: {
     url: "api/cart/add",
     method: "post",
